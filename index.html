@@ -16,8 +16,8 @@
 <style>
 :root{
   --bg:#0d1117;--panel:#161b22;--panel2:#1c2128;--border:#30363d;
-  --accent:#f0a500;--acc2:#e05a00;--green:#3fb950;--red:#f85149;
-  --blue:#58a6ff;--text:#e6edf3;--muted:#8b949e;
+  --accent:#f0a500;--green:#3fb950;--red:#f85149;--blue:#58a6ff;
+  --text:#e6edf3;--muted:#8b949e;
   --mono:'Share Tech Mono',monospace;--sans:'Rajdhani',sans-serif;
   --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);
 }
@@ -26,127 +26,152 @@ html,body{height:100%;overflow:hidden;touch-action:manipulation}
 body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100dvh}
 
 /* ── TOPBAR ── */
-.topbar{display:flex;align-items:center;gap:6px;padding:calc(8px + var(--safe-t)) 10px 8px;
-  background:var(--panel);border-bottom:1px solid var(--border);z-index:3000;flex-shrink:0;min-height:54px}
-.logo{font-size:16px;font-weight:700;letter-spacing:2px;color:var(--accent);display:flex;align-items:center;gap:5px;flex-shrink:0}
+.topbar{display:flex;align-items:center;gap:6px;padding:calc(7px + var(--safe-t)) 10px 7px;
+  background:var(--panel);border-bottom:1px solid var(--border);z-index:3000;flex-shrink:0;min-height:52px}
+.logo{font-size:16px;font-weight:700;letter-spacing:2px;color:var(--accent);display:flex;align-items:center;gap:4px;flex-shrink:0}
 .top-stats{display:flex;gap:8px;flex:1;overflow:hidden;align-items:center}
 .tstat{display:flex;flex-direction:column;min-width:0}
-.tstat-l{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-family:var(--mono);white-space:nowrap}
+.tstat-l{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-family:var(--mono)}
 .tstat-v{font-size:14px;font-weight:700;font-family:var(--mono);white-space:nowrap}
 .tstat-v.ok{color:var(--green)}.tstat-v.warn{color:var(--accent)}.tstat-v.over{color:var(--red)}
-.tdiv{width:1px;height:26px;background:var(--border);flex-shrink:0}
+.tdiv{width:1px;height:24px;background:var(--border);flex-shrink:0}
 .top-actions{display:flex;gap:5px;flex-shrink:0}
-
-/* ── BUTTONS ── */
-.btn{display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 12px;
+.btn{display:flex;align-items:center;justify-content:center;gap:4px;padding:7px 11px;
   border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--text);
   font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;
-  text-transform:uppercase;min-height:40px;white-space:nowrap;user-select:none;transition:opacity .15s}
+  text-transform:uppercase;min-height:38px;white-space:nowrap;user-select:none}
 .btn:active{opacity:.65}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#000}
 .btn.go{background:var(--green);border-color:var(--green);color:#000}
 .btn.stop-nav{background:var(--red);border-color:var(--red);color:#fff}
-.btn.rec{background:var(--red);border-color:var(--red);color:#fff}
-.btn.rec-active{background:#7f0000;border-color:var(--red);color:var(--red)}
+.btn.rec{background:rgba(248,81,73,.15);border-color:var(--red);color:var(--red)}
+.btn.rec-on{background:var(--red);border-color:var(--red);color:#fff;animation:recPulse 1.5s infinite}
+@keyframes recPulse{50%{opacity:.6}}
 .btn:disabled{opacity:.28;pointer-events:none}
 
 /* ── SUMMARY BAR ── */
-.summary-bar{display:none;flex-shrink:0;background:var(--panel2);border-bottom:1px solid var(--border);padding:5px 12px}
-.summary-bar.visible{display:flex}
+.sum-bar{display:none;flex-shrink:0;background:var(--panel2);border-bottom:1px solid var(--border);padding:5px 12px}
+.sum-bar.on{display:flex}
 .sb-cols{display:flex;width:100%;align-items:center;gap:10px}
 .sb-item{display:flex;flex-direction:column;align-items:center;flex:1}
-.sb-label{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-family:var(--mono)}
+.sb-lbl{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-family:var(--mono)}
 .sb-val{font-size:15px;font-weight:700;font-family:var(--mono)}
 .sb-val.ok{color:var(--green)}.sb-val.warn{color:var(--accent)}.sb-val.over{color:var(--red)}
 .sb-div{width:1px;height:28px;background:var(--border);flex-shrink:0}
 .sb-prog{flex:2;display:flex;flex-direction:column;gap:3px}
 .sb-prog-row{display:flex;justify-content:space-between;font-size:9px;font-family:var(--mono);color:var(--muted)}
-.sb-prog-bar{height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
-.sb-prog-fill{height:100%;border-radius:3px;transition:width .5s,background .5s}
+.sb-pbar{height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.sb-pfill{height:100%;border-radius:3px;transition:width .5s,background .5s}
 
 /* ── MAP ── */
 .map-wrap{position:relative;flex:1;min-height:0;overflow:hidden}
-#map{width:100%;height:100%;background:#1a1f2e;transition:all .3s}
+#map{width:100%;height:100%;background:#1a1f2e}
 
-/* ── NAV HUD ── (Waze-like overlay, shown during navigation) */
-.nav-hud{position:absolute;top:0;left:0;right:0;z-index:900;pointer-events:none;display:none}
-.nav-hud.visible{display:block}
+/* ════════════════════════════════════════
+   NAV HUD — Waze-style overlay
+════════════════════════════════════════ */
+.nav-hud{position:absolute;inset:0;pointer-events:none;display:none;z-index:900}
+.nav-hud.on{display:block}
 
-/* Speed panel — top-left */
-.hud-speed{position:absolute;top:12px;left:12px;pointer-events:auto;
-  background:rgba(13,17,23,.92);border:1px solid var(--border);border-radius:14px;
-  padding:10px 14px;min-width:90px;text-align:center;backdrop-filter:blur(8px)}
-.hud-speed-val{font-size:36px;font-weight:700;font-family:var(--mono);color:var(--text);line-height:1}
-.hud-speed-unit{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:1px}
-.hud-speed-acc{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:3px}
+/* ── INSTRUCTION CARD (top, full-width strip like Waze) ── */
+.hud-instr{
+  position:absolute;top:0;left:0;right:0;pointer-events:auto;
+  background:rgba(13,17,23,.96);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:0;
+  backdrop-filter:blur(10px);
+}
+/* Arrow box */
+.hud-instr-icon{
+  width:90px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:52px;padding:14px 10px;
+  border-right:1px solid var(--border);
+  transition:all .3s;
+}
+/* Text side */
+.hud-instr-body{flex:1;padding:10px 14px;min-width:0}
+.hud-instr-dist{font-size:28px;font-weight:700;font-family:var(--mono);color:var(--text);line-height:1}
+.hud-instr-action{font-size:18px;font-weight:700;color:var(--accent);margin:2px 0}
+.hud-instr-detail{font-size:12px;color:var(--muted);font-family:var(--mono)}
+/* Speed bubble (right) */
+.hud-instr-speed{
+  width:72px;flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border-left:1px solid var(--border);padding:10px 6px;
+}
+.hud-spd-val{font-size:30px;font-weight:700;font-family:var(--mono);line-height:1}
+.hud-spd-unit{font-size:9px;color:var(--muted);font-family:var(--mono);letter-spacing:1px}
 
-/* Next stop panel — top center */
-.hud-next{position:absolute;top:12px;left:50%;transform:translateX(-50%);pointer-events:auto;
-  background:rgba(13,17,23,.92);border:1px solid var(--border);border-radius:14px;
-  padding:10px 18px;min-width:200px;max-width:300px;text-align:center;backdrop-filter:blur(8px)}
-.hud-next-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-family:var(--mono)}
-.hud-next-name{font-size:17px;font-weight:700;color:var(--accent);margin:2px 0;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hud-next-dist{font-size:26px;font-weight:700;font-family:var(--mono);color:var(--text);line-height:1}
-.hud-next-prog{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+/* Instruction colors by type */
+.hud-instr-icon.stop   {background:rgba(248,81,73,.15)}
+.hud-instr-icon.arrive {background:rgba(63,185,80,.12)}
+.hud-instr-icon.turn   {background:rgba(240,165,0,.1)}
+.hud-instr-icon.straight{background:transparent}
 
-/* Compass — top-right */
-.hud-compass{position:absolute;top:12px;right:12px;pointer-events:auto;
-  background:rgba(13,17,23,.92);border:1px solid var(--border);border-radius:50%;
-  width:70px;height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  backdrop-filter:blur(8px)}
-.hud-compass-arrow{font-size:28px;transition:transform .3s ease}
-.hud-compass-deg{font-size:11px;font-family:var(--mono);color:var(--muted);margin-top:2px}
+/* ── COMPASS (right side of map, below instruction) ── */
+.hud-compass{
+  position:absolute;right:12px;top:115px;pointer-events:auto;
+  background:rgba(13,17,23,.9);border:1px solid var(--border);border-radius:50%;
+  width:60px;height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);
+}
+.hud-compass-arrow{font-size:26px;transition:transform .3s}
+.hud-compass-deg{font-size:10px;font-family:var(--mono);color:var(--muted)}
 
-/* Route progress strip — bottom of map */
-.hud-strip{position:absolute;bottom:100px;left:12px;right:12px;pointer-events:auto;
-  background:rgba(13,17,23,.92);border:1px solid var(--border);border-radius:10px;
-  padding:10px 14px;backdrop-filter:blur(8px);display:flex;align-items:center;gap:12px}
-.hud-strip-bar{flex:1;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
-.hud-strip-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--accent));border-radius:3px;transition:width .5s}
-.hud-strip-label{font-size:11px;font-family:var(--mono);color:var(--muted);white-space:nowrap}
+/* ── ROUTE PROGRESS (bottom strip) ── */
+.hud-strip{
+  position:absolute;bottom:100px;left:12px;right:12px;pointer-events:auto;
+  background:rgba(13,17,23,.9);border:1px solid var(--border);border-radius:10px;
+  padding:9px 14px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(8px);
+}
+.hud-sbar{flex:1;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
+.hud-sfill{height:100%;background:linear-gradient(90deg,var(--green),var(--accent));border-radius:3px;transition:width .5s}
+.hud-slbl{font-size:11px;font-family:var(--mono);color:var(--muted);white-space:nowrap}
 
-/* Show/hide sheet toggle during nav */
+/* Toggle stops panel */
 .hud-toggle{position:absolute;bottom:12px;right:12px;z-index:910;pointer-events:auto;
   background:rgba(13,17,23,.9);border:1px solid var(--border);border-radius:10px;
-  padding:8px 14px;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;color:var(--accent);
-  display:none;letter-spacing:1px;backdrop-filter:blur(8px)}
-.hud-toggle.visible{display:block}
+  padding:8px 14px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;
+  color:var(--accent);letter-spacing:1px;backdrop-filter:blur(8px);display:none}
+.hud-toggle.on{display:block}
 
-/* Stop mode toggle */
-.hud-stops-panel{position:absolute;bottom:100px;left:12px;right:12px;z-index:910;pointer-events:auto;
-  background:rgba(13,17,23,.95);border:1px solid var(--border);border-radius:14px;
-  padding:0;overflow:hidden;display:none;backdrop-filter:blur(8px);max-height:55vh;flex-direction:column}
-.hud-stops-panel.visible{display:flex}
-.hud-stops-header{padding:10px 16px;border-bottom:1px solid var(--border);font-size:12px;
+/* Floating stops panel */
+.hud-stops-panel{
+  position:absolute;bottom:60px;left:12px;right:12px;z-index:910;pointer-events:auto;
+  background:rgba(13,17,23,.97);border:1px solid var(--border);border-radius:14px;
+  display:none;flex-direction:column;max-height:52vh;overflow:hidden;backdrop-filter:blur(10px);
+}
+.hud-stops-panel.on{display:flex}
+.hud-sp-head{padding:10px 16px;border-bottom:1px solid var(--border);font-size:11px;
   font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
   display:flex;justify-content:space-between;align-items:center}
-.hud-stops-close{cursor:pointer;color:var(--red);font-size:18px;font-weight:700}
 
 /* ── RECORDING INDICATOR ── */
-.rec-indicator{position:absolute;bottom:165px;left:12px;z-index:910;pointer-events:auto;
-  background:rgba(127,0,0,.9);border:1px solid var(--red);border-radius:10px;
-  padding:8px 14px;display:none;align-items:center;gap:8px;backdrop-filter:blur(8px)}
-.rec-indicator.visible{display:flex}
+.rec-ind{
+  position:absolute;bottom:165px;left:12px;z-index:910;pointer-events:auto;
+  background:rgba(90,0,0,.95);border:1px solid var(--red);border-radius:10px;
+  padding:8px 12px;display:none;align-items:center;gap:8px;backdrop-filter:blur(8px);
+}
+.rec-ind.on{display:flex}
 .rec-dot{width:10px;height:10px;border-radius:50%;background:var(--red);animation:blink 1s infinite;flex-shrink:0}
-.rec-info{display:flex;flex-direction:column}
-.rec-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--red);font-family:var(--mono)}
-.rec-stats{font-size:13px;font-family:var(--mono);color:var(--text)}
+.rec-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--red);font-family:var(--mono)}
+.rec-stats{font-size:12px;font-family:var(--mono);color:var(--text)}
+.rec-stops-count{font-size:10px;font-family:var(--mono);color:var(--accent)}
 
 /* ── ARRIVING ALERT ── */
 .arriving{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1500;
-  padding:14px 24px;border-radius:12px;font-size:17px;font-weight:700;letter-spacing:1px;
+  padding:14px 22px;border-radius:12px;font-size:17px;font-weight:700;letter-spacing:1px;
   display:none;animation:popIn .3s ease;text-align:center}
 .arriving.arrived {background:var(--green);color:#000;box-shadow:0 6px 30px rgba(63,185,80,.5)}
 .arriving.departed{background:var(--blue);color:#000;box-shadow:0 6px 30px rgba(88,166,255,.4)}
+.arriving.stop-alert{background:var(--red);color:#fff;box-shadow:0 6px 30px rgba(248,81,73,.5)}
 @keyframes popIn{from{transform:translate(-50%,-50%) scale(.7);opacity:0}}
 @keyframes blink{50%{opacity:.15}}
 
 /* ── INSTALL BANNER ── */
 .install-banner{position:absolute;bottom:115px;left:12px;right:12px;z-index:1800;
   background:var(--panel2);border:1px solid var(--accent);border-radius:12px;
-  padding:12px 16px;display:none;flex-direction:column;gap:8px;box-shadow:0 4px 24px rgba(0,0,0,.6)}
-.install-banner p{font-size:13px}
+  padding:12px 16px;display:none;flex-direction:column;gap:8px}
 .install-btns{display:flex;gap:8px}
 
 /* ── BOTTOM SHEET ── */
@@ -157,22 +182,17 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
   transform:translateY(calc(100% - 96px));padding-bottom:var(--safe-b)}
 .sheet.expanded{transform:translateY(0)}
 .sheet.mid{transform:translateY(calc(100% - 280px))}
-.sheet.hidden{transform:translateY(calc(100% - 50px))}
-.sheet-handle{width:40px;height:4px;background:var(--border);border-radius:2px;
-  margin:10px auto 0;flex-shrink:0;cursor:pointer}
-
-/* Peek */
+.sheet.hidden{transform:translateY(calc(100% - 52px))}
+.sheet-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:10px auto 0;flex-shrink:0;cursor:pointer}
 .peek{display:flex;align-items:center;gap:10px;padding:8px 14px 6px;cursor:pointer;flex-shrink:0;user-select:none}
-.peek-left{display:flex;flex-direction:column;flex:1;min-width:0}
-.peek-name{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.peek-sub {font-size:11px;color:var(--muted);font-family:var(--mono)}
-.peek-right{display:flex;align-items:center;gap:8px}
+.peek-left{flex:1;min-width:0}
+.peek-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.peek-sub{font-size:11px;color:var(--muted);font-family:var(--mono)}
 .peek-dist{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--accent)}
-.peek-arrow{font-size:22px}
 
 /* Tabs */
 .sheet-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
-.stab{flex:1;padding:10px 4px;text-align:center;font-size:11px;font-weight:700;letter-spacing:1.5px;
+.stab{flex:1;padding:10px 2px;text-align:center;font-size:10px;font-weight:700;letter-spacing:1.2px;
   text-transform:uppercase;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;user-select:none}
 .stab.active{color:var(--accent);border-bottom-color:var(--accent)}
 
@@ -182,25 +202,25 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 
 /* Upload */
 .upload-zone{margin:14px;border:2px dashed var(--border);border-radius:10px;padding:22px 14px;
-  text-align:center;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:6px}
+  text-align:center;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:5px}
 .upload-zone:active{border-color:var(--accent);background:rgba(240,165,0,.05)}
 .upload-zone input{position:absolute;inset:0;opacity:0;width:100%;cursor:pointer}
 .upload-zone .icon{font-size:28px}
 .upload-zone strong{color:var(--accent);font-size:15px}
 .upload-zone p{font-size:11px;color:var(--muted)}
 
-/* Route info grid */
+/* Route info */
 .route-info{margin:0 14px 10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px}
 .ri-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .ri-item .ril{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-family:var(--mono)}
 .ri-item .riv{font-size:15px;font-weight:700;font-family:var(--mono)}
 
 /* GPS settings */
-.nav-section{padding:12px 14px;display:flex;flex-direction:column;gap:10px;overflow-y:auto}
-.nav-field{display:flex;align-items:center;gap:10px}
-.nav-field label{font-size:12px;color:var(--muted);width:145px;flex-shrink:0;font-family:var(--mono)}
+.nav-section{padding:12px 14px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.nav-field{display:flex;align-items:center;gap:8px}
+.nav-field label{font-size:11px;color:var(--muted);width:145px;flex-shrink:0;font-family:var(--mono)}
 .nav-field input[type=range]{flex:1;accent-color:var(--accent)}
-.nav-field .val{font-size:12px;font-family:var(--mono);color:var(--accent);width:55px;text-align:right}
+.nav-field .val{font-size:11px;font-family:var(--mono);color:var(--accent);width:55px;text-align:right}
 .gps-status{padding:10px 14px;border-radius:8px;border:1px solid var(--border);
   font-size:12px;font-family:var(--mono);display:flex;align-items:center;gap:10px;background:var(--bg)}
 .gps-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
@@ -209,15 +229,15 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 .gps-dot.error {background:var(--red)}
 
 /* Stop cards */
-.stops-list{flex:1;overflow-y:auto;padding:8px 12px 12px;display:flex;flex-direction:column;gap:8px;-webkit-overflow-scrolling:touch}
+.stops-list{flex:1;overflow-y:auto;padding:8px 12px 12px;display:flex;flex-direction:column;gap:7px;-webkit-overflow-scrolling:touch}
 .stop-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;animation:fadeUp .2s ease;transition:border-color .2s,opacity .2s}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}}
-.stop-card.state-current{border-color:var(--green);box-shadow:0 0 0 1px rgba(63,185,80,.15)}
+.stop-card.state-current{border-color:var(--green);box-shadow:0 0 0 1px rgba(63,185,80,.12)}
 .stop-card.state-done{opacity:.4}
 .stop-card.state-over{border-color:var(--red)}
-.sc-head{display:flex;align-items:center;gap:8px;padding:10px 12px 8px}
+.sc-head{display:flex;align-items:center;gap:8px;padding:10px 12px 7px}
 .sc-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:700;font-family:var(--mono);flex-shrink:0;transition:all .3s}
+  font-size:11px;font-weight:700;font-family:var(--mono);flex-shrink:0}
 .sc-num.waiting{background:var(--accent);color:#000}
 .sc-num.current{background:var(--green);color:#000;animation:blink 1.2s infinite}
 .sc-num.done   {background:var(--muted);color:#000}
@@ -226,24 +246,19 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 .sc-badge.waiting{background:rgba(240,165,0,.1);color:var(--accent)}
 .sc-badge.current{background:rgba(63,185,80,.15);color:var(--green)}
 .sc-badge.done   {background:rgba(139,148,158,.12);color:var(--muted)}
-/* Time comparison */
-.sc-times{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);margin:0 12px 8px;border-radius:8px;overflow:hidden}
+.sc-times{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);margin:0 12px 7px;border-radius:8px;overflow:hidden}
 .sc-time-col{background:var(--panel2);padding:8px 12px}
 .sc-time-col.real{background:var(--panel)}
 .sc-time-label{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-family:var(--mono)}
 .sc-time-val{font-size:20px;font-weight:700;font-family:var(--mono);letter-spacing:1px;color:var(--text);margin-top:1px}
-.sc-time-val.running{color:var(--green)}
-.sc-time-val.paused{color:var(--accent)}
-.sc-time-val.over{color:var(--red)}
-.sc-delta{font-size:11px;font-family:var(--mono);margin-top:3px}
+.sc-time-val.running{color:var(--green)}.sc-time-val.paused{color:var(--accent)}.sc-time-val.over{color:var(--red)}
+.sc-delta{font-size:10px;font-family:var(--mono);margin-top:2px}
 .sc-delta.ok{color:var(--green)}.sc-delta.warn{color:var(--accent)}.sc-delta.over{color:var(--red)}
-/* Progress bar */
 .sc-prog{margin:0 12px 6px}
 .sc-prog-bg{height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
 .sc-prog-fill{height:100%;border-radius:3px;transition:width .5s,background .5s;min-width:2px}
-/* Controls */
-.sc-ctrl{display:flex;align-items:center;gap:8px;padding:0 12px 10px}
-.tbtn{width:36px;height:36px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:all .15s;flex-shrink:0}
+.sc-ctrl{display:flex;align-items:center;gap:7px;padding:0 12px 10px}
+.tbtn{width:36px;height:36px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;flex-shrink:0}
 .tbtn:active{transform:scale(.88)}
 .tbtn.go {background:rgba(63,185,80,.15);color:var(--green)}
 .tbtn.ps {background:rgba(240,165,0,.15);color:var(--accent)}
@@ -253,36 +268,32 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
   border:1px solid var(--border);background:transparent;color:var(--muted);font-family:var(--sans);
   font-weight:700;letter-spacing:.5px;text-transform:uppercase}
 .sc-btn:active{opacity:.6}
-
-/* Stops bar */
 .stops-bar{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:6px;flex-shrink:0}
 .stops-bar .btn{flex:1;font-size:11px;padding:9px 4px}
 
-/* Recorded routes list */
-.rec-list{flex:1;overflow-y:auto;padding:8px 12px;display:flex;flex-direction:column;gap:8px;-webkit-overflow-scrolling:touch}
+/* Recorded routes */
+.rec-list{flex:1;overflow-y:auto;padding:8px 12px;display:flex;flex-direction:column;gap:7px;-webkit-overflow-scrolling:touch}
 .rec-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:6px}
 .rec-card-head{display:flex;align-items:center;gap:8px}
 .rec-card-name{flex:1;font-size:14px;font-weight:700}
 .rec-card-meta{font-size:11px;color:var(--muted);font-family:var(--mono)}
-.rec-card-btns{display:flex;gap:6px;margin-top:4px}
+.rec-card-btns{display:flex;gap:6px;margin-top:2px}
 
 /* Pos marker */
-.pos-marker{display:flex;align-items:center;justify-content:center;
-  width:36px;height:36px;position:relative}
-.pos-marker-arrow{font-size:28px;transition:transform .4s ease;filter:drop-shadow(0 0 6px rgba(88,166,255,.8))}
-.pos-marker-dot{width:14px;height:14px;background:var(--blue);border:3px solid #fff;border-radius:50%;
+.pos-arrow{font-size:28px;line-height:1;transition:transform .4s;filter:drop-shadow(0 0 5px rgba(88,166,255,.8))}
+.pos-dot{width:14px;height:14px;background:var(--blue);border:3px solid #fff;border-radius:50%;
   box-shadow:0 0 0 0 rgba(88,166,255,.6);animation:pulse 2s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(88,166,255,.6)}70%{box-shadow:0 0 0 10px rgba(88,166,255,0)}100%{box-shadow:0 0 0 0 rgba(88,166,255,0)}}
 
-/* Empty state */
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--muted);padding:32px;text-align:center;flex:1}
-.empty .icon{font-size:38px;opacity:.35}
-.empty p{font-size:13px;line-height:1.6}
+/* Empty */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--muted);padding:28px;text-align:center;flex:1}
+.empty .icon{font-size:36px;opacity:.35}
+.empty p{font-size:12px;line-height:1.6}
 
 /* Leaflet */
 .leaflet-container{background:#1a1f2e}
 .leaflet-control-zoom a{background:var(--panel)!important;color:var(--text)!important;border-color:var(--border)!important;font-size:18px!important;width:36px!important;height:36px!important;line-height:36px!important}
-.leaflet-control-zoom{margin:12px!important}
+.leaflet-control-zoom{margin-bottom:110px!important;margin-right:12px!important}
 .leaflet-popup-content-wrapper{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:8px}
 .leaflet-popup-tip{background:var(--panel)}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -293,8 +304,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="logo">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-    GPX
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>GPX
   </div>
   <div class="top-stats">
     <div class="tstat"><span class="tstat-l">Rota</span><span class="tstat-v" id="h-dist">—</span></div>
@@ -304,31 +314,29 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
     <div class="tstat"><span class="tstat-l">Prog</span><span class="tstat-v" id="h-prog">—</span></div>
     <div class="tdiv"></div>
     <div class="tstat"><span class="tstat-l">Real</span><span class="tstat-v ok" id="h-real">—</span></div>
-    <div class="tdiv" id="spd-div" style="display:none"></div>
-    <div class="tstat" id="spd-stat" style="display:none"><span class="tstat-l">Vel</span><span class="tstat-v" id="h-speed">—</span></div>
   </div>
   <div class="top-actions">
-    <button class="btn primary" onclick="el('gpx-file').click()" style="min-width:40px;padding:8px">📂</button>
+    <button class="btn primary" onclick="el('gpx-file').click()" style="min-width:38px;padding:7px">📂</button>
     <input type="file" id="gpx-file" accept=".gpx" style="display:none" onchange="loadGPX(this)">
-    <button class="btn rec" id="btn-rec" onclick="toggleRecording()" title="Gravar rota">⏺ Gravar</button>
+    <button class="btn rec" id="btn-rec" onclick="toggleRec()">⏺ Gravar</button>
     <button class="btn go"       id="btn-nav"  onclick="startNav()" disabled>▶ Nav</button>
     <button class="btn stop-nav" id="btn-stop" onclick="stopNav()"  style="display:none">■ Parar</button>
   </div>
 </div>
 
 <!-- SUMMARY BAR -->
-<div class="summary-bar" id="summary-bar">
+<div class="sum-bar" id="sum-bar">
   <div class="sb-cols">
-    <div class="sb-item"><span class="sb-label">Feitas</span><span class="sb-val ok" id="sb-done">0/0</span></div>
+    <div class="sb-item"><span class="sb-lbl">Feitas</span><span class="sb-val ok" id="sb-done">0/0</span></div>
     <div class="sb-div"></div>
-    <div class="sb-item"><span class="sb-label">Prog</span><span class="sb-val" id="sb-prog">—</span></div>
+    <div class="sb-item"><span class="sb-lbl">Prog</span><span class="sb-val" id="sb-prog">—</span></div>
     <div class="sb-div"></div>
     <div class="sb-prog">
-      <div class="sb-prog-row"><span id="sb-real-lbl">Real: 0</span><span id="sb-dlbl" style="color:var(--green)">—</span></div>
-      <div class="sb-prog-bar"><div class="sb-prog-fill" id="sb-fill" style="width:0%"></div></div>
+      <div class="sb-prog-row"><span id="sb-rlbl">Real: 0</span><span id="sb-dlbl" style="color:var(--green)">—</span></div>
+      <div class="sb-pbar"><div class="sb-pfill" id="sb-fill" style="width:0%"></div></div>
     </div>
     <div class="sb-div"></div>
-    <div class="sb-item"><span class="sb-label">Delta</span><span class="sb-val ok" id="sb-delta">—</span></div>
+    <div class="sb-item"><span class="sb-lbl">Delta</span><span class="sb-val ok" id="sb-delta">—</span></div>
   </div>
 </div>
 
@@ -336,58 +344,58 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 <div class="map-wrap">
   <div id="map"></div>
 
-  <!-- ═══ NAV HUD (Waze-like overlay) ═══ -->
+  <!-- ══════════════════ NAV HUD ══════════════════ -->
   <div class="nav-hud" id="nav-hud">
 
-    <!-- Speed (top-left) -->
-    <div class="hud-speed">
-      <div class="hud-speed-val" id="hud-spd">0</div>
-      <div class="hud-speed-unit">km/h</div>
-      <div class="hud-speed-acc" id="hud-acc">± — m</div>
+    <!-- Main instruction strip (Waze-style) -->
+    <div class="hud-instr" id="hud-instr">
+      <div class="hud-instr-icon straight" id="hud-icon">↑</div>
+      <div class="hud-instr-body">
+        <div class="hud-instr-dist"   id="hud-dist">—</div>
+        <div class="hud-instr-action" id="hud-action">Aguardando GPS...</div>
+        <div class="hud-instr-detail" id="hud-detail"></div>
+      </div>
+      <div class="hud-instr-speed">
+        <div class="hud-spd-val"  id="hud-spd">0</div>
+        <div class="hud-spd-unit">km/h</div>
+      </div>
     </div>
 
-    <!-- Next stop (top-center) -->
-    <div class="hud-next">
-      <div class="hud-next-label">Próxima parada</div>
-      <div class="hud-next-name" id="hud-name">—</div>
-      <div class="hud-next-dist" id="hud-dist">—</div>
-      <div class="hud-next-prog" id="hud-prog"></div>
-    </div>
-
-    <!-- Compass (top-right) -->
+    <!-- Compass -->
     <div class="hud-compass">
-      <div class="hud-compass-arrow" id="hud-compass-arrow">↑</div>
-      <div class="hud-compass-deg"   id="hud-compass-deg">0°</div>
+      <div class="hud-compass-arrow" id="hud-compass">↑</div>
+      <div class="hud-compass-deg"   id="hud-cdeg">N</div>
     </div>
 
-    <!-- Route progress strip (bottom) -->
+    <!-- Route progress strip -->
     <div class="hud-strip">
-      <div class="hud-strip-label" id="hud-strip-done">0%</div>
-      <div class="hud-strip-bar"><div class="hud-strip-fill" id="hud-strip-fill" style="width:0%"></div></div>
-      <div class="hud-strip-label" id="hud-strip-left">— restante</div>
+      <div class="hud-slbl" id="hud-pct">0%</div>
+      <div class="hud-sbar"><div class="hud-sfill" id="hud-sfill" style="width:0%"></div></div>
+      <div class="hud-slbl" id="hud-left">— restante</div>
     </div>
   </div>
 
-  <!-- Sheet toggle (nav mode) -->
-  <div class="hud-toggle" id="hud-toggle" onclick="toggleHudSheet()">📍 Paradas</div>
+  <!-- Sheet toggle button -->
+  <div class="hud-toggle" id="hud-toggle" onclick="toggleHudPanel()">📍 Paradas</div>
 
-  <!-- Floating stops panel (nav mode) -->
-  <div class="hud-stops-panel" id="hud-stops-panel">
-    <div class="hud-stops-header">
+  <!-- Floating stops panel -->
+  <div class="hud-stops-panel" id="hud-sp">
+    <div class="hud-sp-head">
       Paradas da rota
-      <span class="hud-stops-close" onclick="toggleHudSheet()">✕</span>
+      <span style="cursor:pointer;color:var(--red);font-size:18px" onclick="toggleHudPanel()">✕</span>
     </div>
-    <div class="stops-list" id="hud-stops-list" style="max-height:45vh"></div>
+    <div class="stops-list" id="hud-sp-list" style="max-height:44vh"></div>
   </div>
 
   <!-- Recording indicator -->
-  <div class="rec-indicator" id="rec-indicator">
+  <div class="rec-ind" id="rec-ind">
     <div class="rec-dot"></div>
-    <div class="rec-info">
-      <span class="rec-label">Gravando rota</span>
-      <span class="rec-stats" id="rec-stats">0 pts · 0.0 km</span>
+    <div>
+      <div class="rec-label">Gravando rota</div>
+      <div class="rec-stats"      id="rec-stats">0 pts · 0.0 km</div>
+      <div class="rec-stops-count" id="rec-sc">0 paradas detectadas</div>
     </div>
-    <button class="btn stop-nav" style="padding:6px 10px;font-size:11px;min-height:32px" onclick="toggleRecording()">■ Parar</button>
+    <button class="btn stop-nav" style="padding:5px 10px;font-size:11px;min-height:30px" onclick="toggleRec()">■ Stop</button>
   </div>
 
   <!-- Arriving alert -->
@@ -404,18 +412,15 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 
   <!-- BOTTOM SHEET -->
   <div class="sheet mid" id="sheet"
-    ontouchstart="sheetTS(event)" ontouchmove="sheetTM(event)" ontouchend="sheetTE(event)">
+    ontouchstart="shTS(event)" ontouchmove="shTM(event)" ontouchend="shTE(event)">
     <div class="sheet-handle" onclick="toggleSheet()"></div>
     <div class="peek" onclick="toggleSheet()">
-      <span id="peek-arrow" style="font-size:22px">🗺️</span>
+      <span id="peek-icon" style="font-size:22px;flex-shrink:0">🗺️</span>
       <div class="peek-left">
         <div class="peek-name" id="peek-name">Carregue um arquivo GPX</div>
         <div class="peek-sub"  id="peek-sub">Toque 📂 para começar</div>
       </div>
-      <div class="peek-right">
-        <div class="peek-dist" id="peek-dist"></div>
-        <div class="peek-arrow" id="peek-arrow2">›</div>
-      </div>
+      <div class="peek-dist" id="peek-dist"></div>
     </div>
 
     <div class="sheet-tabs">
@@ -427,7 +432,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 
     <!-- ROTA PANE -->
     <div class="pane active" id="pane-rota" style="overflow-y:auto">
-      <div class="upload-zone" id="upload-zone">
+      <div class="upload-zone">
         <input type="file" accept=".gpx" onchange="loadGPX(this)">
         <div class="icon">📂</div>
         <strong>Carregar GPX</strong>
@@ -440,6 +445,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
             <div class="ri-item"><div class="ril">Pontos Track</div><div class="riv" id="ri-pts">—</div></div>
             <div class="ri-item"><div class="ril">Paradas</div><div class="riv" id="ri-wpts">—</div></div>
             <div class="ri-item"><div class="ril">Tempo Prog.</div><div class="riv" id="ri-tprog">—</div></div>
+            <div class="ri-item"><div class="ril">Curvas</div><div class="riv" id="ri-turns">—</div></div>
+            <div class="ri-item"><div class="ril">Manobras</div><div class="riv" id="ri-maneuvers">—</div></div>
           </div>
         </div>
         <div style="padding:0 14px 14px;display:flex;gap:8px">
@@ -449,7 +456,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
       </div>
       <div class="empty" id="no-route">
         <div class="icon">🗺️</div>
-        <p>Carregue um <strong style="color:var(--accent)">.gpx</strong> para ver a rota e as paradas com tempos programados.</p>
+        <p>Carregue um <strong style="color:var(--accent)">.gpx</strong> para ver a rota com navegação turn-by-turn e paradas programadas.</p>
       </div>
     </div>
 
@@ -460,7 +467,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
           <div class="gps-dot wait" id="gps-dot"></div>
           <span id="gps-text">GPS não iniciado</span>
         </div>
-        <div class="nav-field"><label>Raio de chegada</label>
+        <div class="nav-field"><label>Raio chegada (m)</label>
           <input type="range" min="10" max="300" value="80" id="rng-radius" oninput="el('val-radius').textContent=this.value+'m'">
           <span class="val" id="val-radius">80m</span></div>
         <div class="nav-field"><label>Auto-iniciar timer</label>
@@ -472,12 +479,15 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
         <div class="nav-field"><label>Seguir posição</label>
           <input type="range" min="0" max="1" step="1" value="1" id="rng-follow" oninput="el('val-follow').textContent=['Não','Sim'][+this.value]">
           <span class="val" id="val-follow">Sim</span></div>
-        <div class="nav-field"><label>Orientar por heading</label>
-          <input type="range" min="0" max="1" step="1" value="1" id="rng-heading" oninput="el('val-heading').textContent=['Não','Sim'][+this.value]">
-          <span class="val" id="val-heading">Sim</span></div>
         <div class="nav-field"><label>Zoom</label>
           <input type="range" min="14" max="19" value="17" id="rng-zoom" oninput="el('val-zoom').textContent=this.value">
           <span class="val" id="val-zoom">17</span></div>
+        <div class="nav-field"><label>Vel. stop rec. (km/h)</label>
+          <input type="range" min="1" max="15" value="5" id="rng-recvel" oninput="el('val-recvel').textContent=this.value">
+          <span class="val" id="val-recvel">5</span></div>
+        <div class="nav-field"><label>Dur. mín. stop rec. (s)</label>
+          <input type="range" min="5" max="60" value="10" id="rng-recdur" oninput="el('val-recdur').textContent=this.value+'s'">
+          <span class="val" id="val-recdur">10s</span></div>
         <div style="display:flex;gap:8px;padding-top:4px">
           <button class="btn go"       id="btn-nav3"  style="flex:1" onclick="startNav()">▶ Iniciar GPS</button>
           <button class="btn stop-nav" id="btn-stop3" style="flex:1;display:none" onclick="stopNav()">■ Parar</button>
@@ -505,121 +515,198 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
       <div class="rec-list" id="rec-list">
         <div class="empty" id="rec-empty">
           <div class="icon">⏺</div>
-          <p>Toque <strong style="color:var(--red)">⏺ Gravar</strong> para registrar uma nova rota com o GPS. Você poderá baixar o arquivo .gpx depois.</p>
+          <p>Toque <strong style="color:var(--red)">⏺ Gravar</strong> para registrar uma nova rota.<br>Paradas são detectadas automaticamente pela velocidade.</p>
         </div>
       </div>
     </div>
-  </div><!-- /sheet -->
-</div><!-- /map-wrap -->
+  </div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 'use strict';
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 
-// ── PWA ───────────────────────────────────────
+// ── PWA ────────────────────────────────────────────────
 let deferredInstall=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;el('install-banner').style.display='flex'});
 function doInstall(){if(!deferredInstall)return;deferredInstall.prompt();deferredInstall.userChoice.then(()=>{deferredInstall=null;hideInstall()})}
 function hideInstall(){el('install-banner').style.display='none'}
 window.addEventListener('appinstalled',hideInstall);
 
-// ── STATE ─────────────────────────────────────
-let map, routeLayer, routeDoneLayer, routeAheadLayer;
+// ── STATE ──────────────────────────────────────────────
+let map, routeLayer, routeDoneLayer, routeAheadLayer, recLayer;
 let posMarker, accCircle;
 let stops=[], stopMarkers={};
-let routePts=[];          // [{lat,lon}] full route from GPX track
-let totalRouteDist=0;     // km
+let routePts=[];          // [{lat,lon}] full route
+let totalRouteDist=0;
+let maneuvers=[];         // computed turn-by-turn instructions
 let navActive=false, watchId=null, currentPos=null, currentHeading=null;
 let arrivingTmr=null;
 const insideStop=new Set();
 
-// Recording
-let isRecording=false;
-let recPoints=[];         // [{lat,lng,t,speed,alt}]
-let recStartTime=null;
-let recInterval=null;
-let savedRecordings=[];   // [{name,points,date,dist}]
+// Recording state
+let isRec=false, recPoints=[], recStops=[], recStopCandidate=null;
+let savedRecs=[];
 
-// ── MAP ───────────────────────────────────────
+// ── MAP ────────────────────────────────────────────────
 map=L.map('map',{center:[-15,-50],zoom:5,zoomControl:true,tap:true});
 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
   attribution:'&copy; OpenStreetMap &copy; CARTO',subdomains:'abcd',maxZoom:20
 }).addTo(map);
 
-// ── SHEET ─────────────────────────────────────
-let sheetState='mid';
-let tsY=0;
-function toggleSheet(){sheetState=sheetState==='expanded'?'mid':'expanded';applySheet()}
-function applySheet(){
-  const s=el('sheet');s.classList.remove('expanded','mid','hidden');
-  s.classList.add(sheetState);
-}
-function sheetTS(e){tsY=e.touches[0]?.clientY||0}
-function sheetTM(e){if(e.target.closest('.stops-list,.rec-list,.nav-section')&&sheetState==='expanded')return;e.preventDefault()}
-function sheetTE(e){const dy=(e.changedTouches[0]?.clientY||tsY)-tsY;if(Math.abs(dy)<25)return;sheetState=dy>0?'mid':'expanded';applySheet()}
+// ── SHEET ──────────────────────────────────────────────
+let shState='mid',tsY=0;
+function toggleSheet(){shState=shState==='expanded'?'mid':'expanded';applySheet()}
+function applySheet(){const s=el('sheet');s.classList.remove('expanded','mid','hidden');s.classList.add(shState)}
+function shTS(e){tsY=e.touches[0]?.clientY||0}
+function shTM(e){if(e.target.closest('.stops-list,.rec-list,.nav-section')&&shState==='expanded')return;e.preventDefault()}
+function shTE(e){const dy=(e.changedTouches[0]?.clientY||tsY)-tsY;if(Math.abs(dy)<25)return;shState=dy>0?'mid':'expanded';applySheet()}
 
-// ── TABS ──────────────────────────────────────
 function switchTab(n){
   ['rota','nav','paradas','gravadas'].forEach(t=>{
     el('stab-'+t).classList.toggle('active',t===n);
     el('pane-'+t).classList.toggle('active',t===n);
   });
-  if(sheetState!=='expanded'){sheetState='expanded';applySheet()}
+  if(shState!=='expanded'){shState='expanded';applySheet()}
 }
 
-// ── NAV HUD SHEET TOGGLE ──────────────────────
-let hudSheetOpen=false;
-function toggleHudSheet(){
-  hudSheetOpen=!hudSheetOpen;
-  el('hud-stops-panel').classList.toggle('visible',hudSheetOpen);
-  if(hudSheetOpen) syncHudStopsList();
+// Floating panel during nav
+let hudPanelOpen=false;
+function toggleHudPanel(){
+  hudPanelOpen=!hudPanelOpen;
+  el('hud-sp').classList.toggle('on',hudPanelOpen);
+  if(hudPanelOpen) renderHudPanel();
 }
-function syncHudStopsList(){
-  const container=el('hud-stops-list');
-  container.innerHTML='';
+function renderHudPanel(){
+  const c=el('hud-sp-list');c.innerHTML='';
   stops.forEach(s=>{
-    const div=document.createElement('div');
-    div.className=`stop-card state-${s.state}`;div.style.marginBottom='8px';
-    div.innerHTML=miniCardHTML(s);
-    container.appendChild(div);
+    const d=document.createElement('div');
+    d.className=`stop-card state-${s.state}`;
+    const delta=s.elapsed-s.dur_s;
+    const ds=s.dur_s&&s.elapsed>0?(delta>=0?`+${fmtTime(delta)}`:`−${fmtTime(-delta)}`):'';
+    d.innerHTML=`
+      <div class="sc-head">
+        <div class="sc-num ${s.state==='done'?'done':s.state==='current'?'current':'waiting'}">${s.state==='done'?'✓':s.id}</div>
+        <div class="sc-name">${s.name}</div>
+        <span class="sc-badge ${s.state}">${{waiting:'Aguard.',current:'Ativo',done:'Feito'}[s.state]}</span>
+      </div>
+      <div class="sc-times">
+        <div class="sc-time-col"><div class="sc-time-label">PROGRAMADO</div><div class="sc-time-val">${s.dur_s?fmtTime(s.dur_s):'—'}</div></div>
+        <div class="sc-time-col real"><div class="sc-time-label">REALIZADO</div>
+          <div class="sc-time-val ${s.running?'running':s.elapsed>0?'paused':''}">${fmtTime(s.elapsed)}</div>
+          ${ds?`<div class="sc-delta ${delta>0?'over':'ok'}">${ds}</div>`:''}
+        </div>
+      </div>
+      <div class="sc-ctrl">
+        ${s.state!=='done'?`<button class="tbtn ${s.running?'ps':'go'}" onclick="${s.running?'pauseTimer':'startTimer'}(${s.id});renderHudPanel()">${s.running?'⏸':'▶'}</button>`:''}
+        <div class="sc-btns"><button class="sc-btn" onclick="focusStop(${s.id})">🎯 Ver</button></div>
+      </div>`;
+    c.appendChild(d);
   });
 }
-function miniCardHTML(s){
-  const delta=s.elapsed-s.dur_s;
-  const deltaStr=s.dur_s&&s.elapsed>0?(delta>=0?`+${fmtTime(delta)} atraso`:`−${fmtTime(-delta)} adiantado`):'';
-  const deltaClass=!s.dur_s||s.elapsed===0?'':delta>0?'over':'ok';
-  return `
-  <div class="sc-head">
-    <div class="sc-num ${s.state==='done'?'done':s.state==='current'?'current':'waiting'}">${s.state==='done'?'✓':s.id}</div>
-    <div class="sc-name">${s.name}</div>
-    <span class="sc-badge ${s.state}">${{waiting:'Aguard.',current:'Ativo',done:'Feito'}[s.state]}</span>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);margin:0 12px 8px;border-radius:6px;overflow:hidden">
-    <div style="background:var(--panel2);padding:6px 10px">
-      <div style="font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-family:var(--mono)">PROGRAMADO</div>
-      <div style="font-size:17px;font-weight:700;font-family:var(--mono)">${s.dur_s?fmtTime(s.dur_s):'—'}</div>
-    </div>
-    <div style="background:var(--panel);padding:6px 10px">
-      <div style="font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-family:var(--mono)">REALIZADO</div>
-      <div style="font-size:17px;font-weight:700;font-family:var(--mono);color:${s.running?'var(--green)':s.elapsed>0?'var(--accent)':'var(--text)'}">${fmtTime(s.elapsed)}</div>
-      ${deltaStr?`<div style="font-size:10px;font-family:var(--mono)" class="sc-delta ${deltaClass}">${deltaStr}</div>`:''}
-    </div>
-  </div>
-  <div style="padding:0 12px 10px;display:flex;gap:6px">
-    ${s.state!=='done'?`<button class="sc-btn" onclick="s${s.state==='current'&&s.running?'pauseTimer':'startTimer'}Hud(${s.id})" style="flex:1">${s.running?'⏸ Pausar':'▶ Iniciar'}</button>`:''}
-    <button class="sc-btn" onclick="focusStop(${s.id})" style="flex:1">🎯 Ver</button>
-  </div>`;
-}
-window.startTimerHud=id=>{ startTimer(id); syncHudStopsList(); };
-window.pauseTimerHud=id=>{ pauseTimer(id); syncHudStopsList(); };
 
-// ── GPX LOAD ──────────────────────────────────
+// ══════════════════════════════════════════════════════
+//  TURN-BY-TURN ENGINE
+// ══════════════════════════════════════════════════════
+
+// Compute angle difference (-180 to +180)
+function angleDiff(a,b){let d=b-a;while(d>180)d-=360;while(d<-180)d+=360;return d}
+
+// Classify angle difference into maneuver type
+function classifyTurn(diff,deg){
+  if(Math.abs(diff)<20) return{type:'straight',icon:'↑',label:'Continue reto',cls:'straight'};
+  if(diff>=150||diff<=-150) return{type:'uturn',icon:'↩',label:'Faça o retorno',cls:'turn'};
+  if(diff>=80)  return{type:'right',icon:'→',label:'Vire à direita',cls:'turn'};
+  if(diff>=30)  return{type:'sr',   icon:'↗',label:'Leve à direita',cls:'straight'};
+  if(diff<=-80) return{type:'left', icon:'←',label:'Vire à esquerda',cls:'turn'};
+  if(diff<=-30) return{type:'sl',   icon:'↖',label:'Leve à esquerda',cls:'straight'};
+  return{type:'straight',icon:'↑',label:'Continue reto',cls:'straight'};
+}
+
+// Build maneuvers array from route points
+// Returns [{idx, lat, lon, distFromStart, icon, label, cls}]
+function buildManeuvers(pts){
+  const result=[];
+  const SMOOTH=5;      // average over N points to reduce noise
+  const MIN_TURN=28;   // degrees to call it a real turn
+  const MIN_SEP=0.04;  // km minimum between maneuvers
+
+  let lastManeuverDist=0;
+  let cumDist=0;
+
+  for(let i=SMOOTH;i<pts.length-SMOOTH;i++){
+    // Cumulative distance
+    cumDist+=haversine(pts[i-1].lat,pts[i-1].lon,pts[i].lat,pts[i].lon);
+
+    const b1=brng(pts[i-SMOOTH].lat,pts[i-SMOOTH].lon,pts[i].lat,pts[i].lon);
+    const b2=brng(pts[i].lat,pts[i].lon,pts[i+SMOOTH].lat,pts[i+SMOOTH].lon);
+    const diff=angleDiff(b1,b2);
+
+    if(Math.abs(diff)>=MIN_TURN && cumDist-lastManeuverDist>=MIN_SEP){
+      const m=classifyTurn(diff);
+      if(m.type!=='straight'){
+        result.push({idx:i,lat:pts[i].lat,lon:pts[i].lon,distFromStart:cumDist,...m});
+        lastManeuverDist=cumDist;
+      }
+    }
+  }
+
+  // Add arrival at end
+  result.push({
+    idx:pts.length-1,lat:pts[pts.length-1].lat,lon:pts[pts.length-1].lon,
+    distFromStart:totalRouteDist,type:'arrive',icon:'🏁',label:'Chegou ao destino',cls:'arrive'
+  });
+
+  return result;
+}
+
+// Find maneuver to show based on current route index
+function getNextManeuver(curIdx,curDistFromStart){
+  // Also check waypoint stops
+  const nextStop=stops.filter(s=>s.state!=='done').find(s=>{
+    const d=haversine(currentPos.lat,currentPos.lng,s.lat,s.lng)*1000;
+    return d<+el('rng-radius').value*4; // within 4x arrival radius
+  });
+
+  // Nearest upcoming maneuver
+  const upcoming=maneuvers.filter(m=>m.idx>curIdx&&m.distFromStart>curDistFromStart);
+  const nextMan=upcoming[0]||null;
+
+  // If a stop is closer, prioritize it
+  if(nextStop){
+    const stopDist=haversine(currentPos.lat,currentPos.lng,nextStop.lat,nextStop.lng)*1000;
+    const manDist=nextMan?haversine(currentPos.lat,currentPos.lng,nextMan.lat,nextMan.lon)*1000:Infinity;
+    if(stopDist<manDist){
+      return{dist:stopDist,icon:'⏸',label:'Efetue a parada',detail:nextStop.name+(nextStop.dur_s?` · ${fmtTime(nextStop.dur_s)}`:''),cls:'stop'};
+    }
+  }
+
+  if(!nextMan) return{dist:0,icon:'🏁',label:'Destino atingido',detail:'',cls:'arrive'};
+  const distM=haversine(currentPos.lat,currentPos.lng,nextMan.lat,nextMan.lon)*1000;
+  const afterMan=upcoming[1]?` Depois: ${upcoming[1].label}`:'';
+  return{dist:distM,icon:nextMan.icon,label:nextMan.label,detail:afterMan,cls:nextMan.cls};
+}
+
+// Format distance for instruction
+function fmtDist(m){
+  if(m<20)  return'aqui';
+  if(m<1000)return Math.round(m/10)*10+' m';
+  return(m/1000).toFixed(1)+' km';
+}
+
+// ── GPX LOAD ───────────────────────────────────────────
 function loadGPX(input){
   const file=input.files[0];if(!file)return;
-  new FileReader().addEventListener('load',e=>parseGPX(e.target.result,file.name),false);
   const fr=new FileReader();fr.onload=e=>parseGPX(e.target.result,file.name);fr.readAsText(file);
   input.value='';
+}
+
+function clearMapLayers(){
+  [routeLayer,routeDoneLayer,routeAheadLayer,recLayer].forEach(l=>{if(l)map.removeLayer(l)});
+  routeLayer=routeDoneLayer=routeAheadLayer=recLayer=null;
+  Object.values(stopMarkers).forEach(m=>map.removeLayer(m));
+  stopMarkers={};
 }
 
 function parseGPX(xml,filename){
@@ -633,28 +720,22 @@ function parseGPX(xml,filename){
   });
   if(pts.length<2){alert('GPX inválido ou sem pontos de track.');return}
 
-  // Clear
-  [routeLayer,routeDoneLayer,routeAheadLayer].forEach(l=>{if(l)map.removeLayer(l)});
-  Object.values(stopMarkers).forEach(m=>map.removeLayer(m));
-  stopMarkers={};stops=[];insideStop.clear();
-  el('stops-list').innerHTML='';
+  clearMapLayers();
+  stops=[];insideStop.clear();el('stops-list').innerHTML='';
 
-  routePts=pts;
-  totalRouteDist=calcDist(pts);
+  routePts=pts;totalRouteDist=calcDist(pts);
 
-  // Full route (faint background)
-  routeLayer=L.polyline(pts.map(p=>[p.lat,p.lon]),{color:'rgba(240,165,0,.25)',weight:5,opacity:1}).addTo(map);
-  // Ahead layer (bright) = full route initially
-  routeAheadLayer=L.polyline(pts.map(p=>[p.lat,p.lon]),{color:'#f0a500',weight:4,opacity:.95}).addTo(map);
-  // Done layer (gray) = empty initially
-  routeDoneLayer=L.polyline([],{color:'#444',weight:4,opacity:.6}).addTo(map);
-
+  // Draw layers
+  const ll=pts.map(p=>[p.lat,p.lon]);
+  routeLayer    =L.polyline(ll,{color:'rgba(240,165,0,.2)',weight:6}).addTo(map);
+  routeAheadLayer=L.polyline(ll,{color:'#f0a500',weight:4,opacity:.95}).addTo(map);
+  routeDoneLayer =L.polyline([],{color:'#555',weight:4,opacity:.7}).addTo(map);
   map.fitBounds(routeLayer.getBounds(),{padding:[20,20]});
 
-  // Start / end
+  // Start / end markers
   const dot=c=>L.divIcon({html:`<div style="background:${c};width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 8px ${c}"></div>`,className:'',iconAnchor:[7,7]});
-  L.marker([pts[0].lat,pts[0].lon],{icon:dot('#3fb950')}).addTo(map).bindTooltip('Início');
-  L.marker([pts[pts.length-1].lat,pts[pts.length-1].lon],{icon:dot('#f85149')}).addTo(map).bindTooltip('Fim');
+  L.marker(ll[0],{icon:dot('#3fb950')}).addTo(map).bindTooltip('Início');
+  L.marker(ll[ll.length-1],{icon:dot('#f85149')}).addTo(map).bindTooltip('Fim');
 
   // Waypoints → stops
   doc.querySelectorAll('wpt').forEach((w,i)=>{
@@ -667,22 +748,23 @@ function parseGPX(xml,filename){
     const m1=cmt.match(/duracao_s=(\d+)/);if(m1)dur_s=parseInt(m1[1]);
     if(!dur_s){const m2=desc.match(/Dura[çc][aã]o:\s*([\d.]+)\s*min/i);if(m2)dur_s=Math.round(parseFloat(m2[1])*60)}
     const id=i+1;
-    const stop={id,name,lat,lng:lon,dur_s,elapsed:0,running:false,intervalId:null,state:'waiting',desc};
-    stops.push(stop);
-
-    const icon=stopIcon(id,'waiting');
-    const marker=L.marker([lat,lon],{icon}).addTo(map).bindPopup(
-      `<strong>${name}</strong>${dur_s?`<br><small style="font-family:var(--mono);color:#888">⏱ Programado: ${fmtTime(dur_s)}</small>`:''}`,{maxWidth:200});
-    stopMarkers[id]=marker;
-    renderCard(stop);
+    stops.push({id,name,lat,lng:lon,dur_s,elapsed:0,running:false,intervalId:null,state:'waiting',desc});
+    stopMarkers[id]=L.marker([lat,lon],{icon:mkStopIcon(id,'waiting')}).addTo(map)
+      .bindPopup(`<strong>${name}</strong>${dur_s?`<br><small style="color:#888;font-family:var(--mono)">⏱ ${fmtTime(dur_s)}</small>`:''}`,{maxWidth:180});
+    renderCard(stops[stops.length-1]);
   });
+
+  // Build turn-by-turn maneuvers
+  maneuvers=buildManeuvers(pts);
 
   // Stats
   const totalProg=stops.reduce((a,s)=>a+s.dur_s,0);
-  const durStr=pts[0].t&&pts[pts.length-1].t?fmtDurMs(pts[pts.length-1].t-pts[0].t):'—';
   el('ri-dist').textContent=totalRouteDist>=1?totalRouteDist.toFixed(2)+' km':(totalRouteDist*1000).toFixed(0)+' m';
-  el('ri-pts').textContent=pts.length;el('ri-wpts').textContent=stops.length;
+  el('ri-pts').textContent=pts.length;
+  el('ri-wpts').textContent=stops.length;
   el('ri-tprog').textContent=fmtTime(totalProg);
+  el('ri-turns').textContent=maneuvers.filter(m=>m.type!=='straight'&&m.type!=='arrive').length;
+  el('ri-maneuvers').textContent=maneuvers.length;
   el('h-dist').textContent=totalRouteDist>=1?totalRouteDist.toFixed(1)+'km':(totalRouteDist*1000).toFixed(0)+'m';
   el('h-prog').textContent=totalProg?fmtTime(totalProg):'—';el('h-real').textContent='00:00:00';
   el('h-stops').textContent=`0/${stops.length}`;
@@ -690,32 +772,28 @@ function parseGPX(xml,filename){
   el('no-route').style.display='none';el('route-details').style.display='flex';
   el('stops-empty').style.display=stops.length?'none':'';
   el('btn-nav').disabled=false;el('btn-nav2').disabled=false;
-  el('peek-name').textContent=filename;
-  el('peek-sub').textContent=`${stops.length} paradas · prog: ${fmtTime(totalProg)}`;
-  el('peek-arrow').textContent='🗺️';
-  updSummaryBar();switchTab('rota');sheetState='mid';applySheet();
+  el('peek-icon').textContent='🗺️';el('peek-name').textContent=filename;
+  el('peek-sub').textContent=`${stops.length} paradas · ${maneuvers.filter(m=>m.type!=='arrive').length} manobras`;
+  updSummaryBar();switchTab('rota');shState='mid';applySheet();
 }
 
-function stopIcon(id,state){
-  const colors={waiting:'#f0a500',current:'#3fb950',done:'#555555'};
-  const label=state==='done'?'✓':id;
-  const c=colors[state]||'#f0a500';
+// ── STOP CARDS ─────────────────────────────────────────
+function mkStopIcon(id,state){
+  const colors={waiting:'#f0a500',current:'#3fb950',done:'#555'};
+  const lbl=state==='done'?'✓':id;const c=colors[state]||'#f0a500';
   return L.divIcon({
-    html:`<div style="background:${c};color:${state==='done'?'#aaa':'#000'};width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center"><span style="transform:rotate(45deg);font-size:12px;font-weight:700">${label}</span></div>`,
+    html:`<div style="background:${c};color:${state==='done'?'#aaa':'#000'};width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center"><span style="transform:rotate(45deg);font-size:12px;font-weight:700">${lbl}</span></div>`,
     className:'',iconSize:[30,30],iconAnchor:[15,30],popupAnchor:[0,-34]
   });
 }
-
-// ── STOP CARDS ────────────────────────────────
 function renderCard(s){
   el('stops-empty').style.display='none';
   const card=document.createElement('div');
   card.className=`stop-card state-waiting`;card.id=`sc-${s.id}`;
   card.innerHTML=cardHTML(s);el('stops-list').appendChild(card);
 }
-
 function cardHTML(s){
-  const hasProg=s.dur_s>0;
+  const hp=s.dur_s>0;
   return `
   <div class="sc-head">
     <div class="sc-num waiting" id="scnum-${s.id}">${s.id}</div>
@@ -725,15 +803,15 @@ function cardHTML(s){
   <div class="sc-times">
     <div class="sc-time-col">
       <div class="sc-time-label">PROGRAMADO</div>
-      <div class="sc-time-val">${hasProg?fmtTime(s.dur_s):'—'}</div>
-      ${hasProg?`<div class="sc-delta" id="sc-delta-${s.id}"></div>`:''}
+      <div class="sc-time-val">${hp?fmtTime(s.dur_s):'—'}</div>
+      ${hp?`<div class="sc-delta" id="scd-${s.id}"></div>`:''}
     </div>
     <div class="sc-time-col real">
       <div class="sc-time-label">REALIZADO</div>
       <div class="sc-time-val" id="td-${s.id}">00:00:00</div>
     </div>
   </div>
-  ${hasProg?`<div class="sc-prog"><div class="sc-prog-bg"><div class="sc-prog-fill" id="sc-bar-${s.id}" style="width:0%;background:var(--green)"></div></div></div>`:''}
+  ${hp?`<div class="sc-prog"><div class="sc-prog-bg"><div class="sc-prog-fill" id="scb-${s.id}" style="width:0%;background:var(--green)"></div></div></div>`:''}
   <div class="sc-ctrl">
     <button class="tbtn go"  id="tbgo-${s.id}" onclick="startTimer(${s.id})">▶</button>
     <button class="tbtn ps"  id="tbps-${s.id}" onclick="pauseTimer(${s.id})" style="display:none">⏸</button>
@@ -744,40 +822,34 @@ function cardHTML(s){
     </div>
   </div>`;
 }
-
 function updCardProgress(s){
   if(!s.dur_s)return;
   const pct=Math.min((s.elapsed/s.dur_s)*100,110);
-  const bar=el(`sc-bar-${s.id}`);
+  const bar=el(`scb-${s.id}`);
   if(bar){bar.style.width=Math.min(pct,100)+'%';bar.style.background=pct<90?'var(--green)':pct<100?'var(--accent)':'var(--red)'}
   const delta=s.elapsed-s.dur_s;
-  const dEl=el(`sc-delta-${s.id}`);
-  if(dEl&&s.elapsed>0){
-    dEl.className=`sc-delta ${delta<=0?'ok':delta<60?'warn':'over'}`;
-    dEl.textContent=delta<=0?`−${fmtTime(-delta)} adiantado`:`+${fmtTime(delta)} atraso`;
-  }
+  const dEl=el(`scd-${s.id}`);
+  if(dEl&&s.elapsed>0){dEl.className=`sc-delta ${delta<=0?'ok':delta<60?'warn':'over'}`;dEl.textContent=delta<=0?`−${fmtTime(-delta)} adiantado`:`+${fmtTime(delta)} atraso`}
   const tdEl=el(`td-${s.id}`);
-  if(tdEl) tdEl.className=`sc-time-val${s.running?' running':s.elapsed>0?' paused':''}${delta>0&&s.elapsed>0?' over':''}`;
+  if(tdEl)tdEl.className=`sc-time-val${s.running?' running':s.elapsed>0?' paused':''}${delta>0&&s.elapsed>0?' over':''}`;
 }
-
 function updCardState(s){
   const card=el(`sc-${s.id}`);if(!card)return;
   card.className=`stop-card state-${s.state==='current'&&s.dur_s>0&&s.elapsed>s.dur_s?'over':s.state}`;
   const num=el(`scnum-${s.id}`);if(num)num.className=`sc-num ${s.state==='waiting'?'waiting':s.state==='current'?'current':'done'}`;
   const st=el(`scst-${s.id}`);
   if(st){st.className=`sc-badge ${s.state}`;st.textContent={waiting:'Aguardando',current:'Em parada',done:'Concluída'}[s.state]}
-  stopMarkers[s.id]?.setIcon(stopIcon(s.id,s.state));
+  stopMarkers[s.id]?.setIcon(mkStopIcon(s.id,s.state));
 }
 
-// ── TIMERS ────────────────────────────────────
+// ── TIMERS ─────────────────────────────────────────────
 function startTimer(id){
   const s=stops.find(s=>s.id===id);if(!s||s.running)return;
   s.running=true;s.state='current';
   s.intervalId=setInterval(()=>{
     s.elapsed++;
     const d=el(`td-${id}`);if(d)d.textContent=fmtTime(s.elapsed);
-    updCardProgress(s);updTotals();
-    if(hudSheetOpen)syncHudStopsList();
+    updCardProgress(s);updTotals();if(hudPanelOpen)renderHudPanel();
   },1000);
   const d=el(`td-${id}`);if(d)d.className='sc-time-val running';
   el(`tbgo-${id}`).style.display='none';el(`tbps-${id}`).style.display='';
@@ -793,125 +865,146 @@ function resetTimer(id){
   pauseTimer(id);const s=stops.find(s=>s.id===id);if(!s)return;
   s.elapsed=0;s.state='waiting';
   const d=el(`td-${id}`);if(d){d.textContent='00:00:00';d.className='sc-time-val'}
-  const bar=el(`sc-bar-${id}`);if(bar)bar.style.width='0%';
-  const dEl=el(`sc-delta-${id}`);if(dEl)dEl.textContent='';
+  const bar=el(`scb-${id}`);if(bar)bar.style.width='0%';
+  const dEl=el(`scd-${id}`);if(dEl)dEl.textContent='';
   updCardState(s);updTotals();updSummaryBar();
 }
 function markDone(id){
   pauseTimer(id);const s=stops.find(s=>s.id===id);if(!s)return;
-  s.state='done';insideStop.delete(id);
-  updCardState(s);updSummaryBar();updNextHud();
-  if(hudSheetOpen)syncHudStopsList();
+  s.state='done';insideStop.delete(id);updCardState(s);updSummaryBar();
+  if(hudPanelOpen)renderHudPanel();
 }
 function startAllTimers(){stops.forEach(s=>{if(s.state!=='done')startTimer(s.id)})}
 function resetAllTimers(){stops.forEach(s=>resetTimer(s.id))}
-
 function updTotals(){
-  const real=stops.reduce((a,s)=>a+s.elapsed,0);
-  const prog=stops.reduce((a,s)=>a+s.dur_s,0);
+  const real=stops.reduce((a,s)=>a+s.elapsed,0),prog=stops.reduce((a,s)=>a+s.dur_s,0);
   el('h-real').textContent=fmtTime(real);
-  const delta=real-prog;
-  el('h-real').className=`tstat-v${delta>120?' over':delta>0?' warn':' ok'}`;
+  const d=real-prog;el('h-real').className=`tstat-v${d>120?' over':d>0?' warn':' ok'}`;
 }
 function updSummaryBar(){
-  const done=stops.filter(s=>s.state==='done').length;
-  const real=stops.reduce((a,s)=>a+s.elapsed,0);
-  const prog=stops.reduce((a,s)=>a+s.dur_s,0);
-  const delta=real-prog;const pct=prog?(real/prog)*100:0;
-  el('h-stops').textContent=`${done}/${stops.length}`;
-  el('sb-done').textContent=`${done}/${stops.length}`;
+  const done=stops.filter(s=>s.state==='done').length,n=stops.length;
+  const real=stops.reduce((a,s)=>a+s.elapsed,0),prog=stops.reduce((a,s)=>a+s.dur_s,0);
+  const delta=real-prog,pct=prog?(real/prog)*100:0;
+  el('h-stops').textContent=`${done}/${n}`;
+  el('sb-done').textContent=`${done}/${n}`;
   el('sb-prog').textContent=prog?fmtTime(prog):'—';
-  el('sb-real-lbl').textContent=`Real: ${fmtTime(real)}`;
+  el('sb-rlbl').textContent=`Real: ${fmtTime(real)}`;
   el('sb-fill').style.width=Math.min(pct,100)+'%';
   el('sb-fill').style.background=pct<90?'var(--green)':pct<100?'var(--accent)':'var(--red)';
   if(prog&&real>0){
-    const d=el('sb-delta'),l=el('sb-dlbl');
-    d.className=`sb-val ${delta<=0?'ok':delta<120?'warn':'over'}`;
-    d.textContent=delta<=0?'−'+fmtTime(-delta):'+'+fmtTime(delta);
-    l.textContent=delta<=0?'adiantado':'atraso';
-    l.style.color=delta<=0?'var(--green)':delta<120?'var(--accent)':'var(--red)';
+    const dv=el('sb-delta'),lv=el('sb-dlbl');
+    dv.className=`sb-val ${delta<=0?'ok':delta<120?'warn':'over'}`;
+    dv.textContent=delta<=0?'−'+fmtTime(-delta):'+'+fmtTime(delta);
+    lv.textContent=delta<=0?'adiantado':'atraso';
+    lv.style.color=delta<=0?'var(--green)':delta<120?'var(--accent)':'var(--red)';
   }
 }
 
-// ── NAVIGATION ────────────────────────────────
+// ── NAVIGATION ─────────────────────────────────────────
 function startNav(){
   if(navActive)return;
   if(!navigator.geolocation){alert('Geolocalização não disponível.');return}
   navActive=true;
   el('btn-nav').style.display='none';el('btn-nav2').style.display='none';
   el('btn-stop').style.display='';el('btn-nav3').style.display='none';el('btn-stop3').style.display='';
-  el('nav-hud').classList.add('visible');
-  el('hud-toggle').classList.add('visible');
-  el('spd-stat').style.display='';el('spd-div').style.display='';
-  el('summary-bar').classList.add('visible');
-  sheetState='hidden';applySheet();
+  el('nav-hud').classList.add('on');el('hud-toggle').classList.add('on');
+  el('sum-bar').classList.add('on');
+  shState='hidden';applySheet();
   setGPS('wait','Aguardando GPS...');
-
-  watchId=navigator.geolocation.watchPosition(onGPS,onGPSErr,{
-    enableHighAccuracy:true,maximumAge:1000,timeout:20000
-  });
+  watchId=navigator.geolocation.watchPosition(onGPS,onGPSErr,{enableHighAccuracy:true,maximumAge:1000,timeout:20000});
 }
 function stopNav(){
   if(watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null}
   navActive=false;
   el('btn-nav').style.display='';el('btn-nav2').style.display='';
   el('btn-stop').style.display='none';el('btn-nav3').style.display='';el('btn-stop3').style.display='none';
-  el('nav-hud').classList.remove('visible');
-  el('hud-toggle').classList.remove('visible');
-  el('hud-stops-panel').classList.remove('visible');hudSheetOpen=false;
-  el('spd-stat').style.display='none';el('spd-div').style.display='none';
-  el('summary-bar').classList.remove('visible');
-  sheetState='mid';applySheet();
-  setGPS('wait','GPS parado');el('h-speed').textContent='—';
+  el('nav-hud').classList.remove('on');el('hud-toggle').classList.remove('on');
+  el('hud-sp').classList.remove('on');hudPanelOpen=false;
+  el('sum-bar').classList.remove('on');
+  shState='mid';applySheet();
+  setGPS('wait','GPS parado');
 }
 
 function onGPS(pos){
-  const {latitude:lat,longitude:lng,accuracy,altitude,speed,heading}=pos.coords;
+  const{latitude:lat,longitude:lng,accuracy,altitude,speed,heading}=pos.coords;
   currentPos={lat,lng};
   if(heading!=null&&!isNaN(heading)) currentHeading=heading;
 
-  const spd=speed!=null?(speed*3.6).toFixed(1):null;
-  el('h-speed').textContent=spd?spd+' km/h':'—';
-  el('hud-spd').textContent=spd?Math.round(speed*3.6):'0';
-  el('hud-acc').textContent=`± ${accuracy?.toFixed(0)||'?'} m`;
-  el('ic-spd')&&(el('ic-spd').textContent=spd?spd+' km/h':'—');
+  const spdKmh=speed!=null?speed*3.6:null;
+  el('hud-spd').textContent=spdKmh!=null?Math.round(spdKmh):'—';
   setGPS('active',`Prec: ${accuracy?.toFixed(0)||'?'} m`);
 
-  // Position marker with heading arrow
-  const hdg=currentHeading;
-  const hasHeading=hdg!=null&&!isNaN(hdg)&&+el('rng-heading').value===1;
-  const markerHtml=hasHeading
-    ? `<div class="pos-marker"><div class="pos-marker-arrow" style="transform:rotate(${hdg}deg)">▲</div></div>`
-    : `<div class="pos-marker"><div class="pos-marker-dot"></div></div>`;
-  const icon=L.divIcon({html:markerHtml,className:'',iconAnchor:[18,18]});
+  // Compass
+  if(currentHeading!=null){
+    const dirs=['N','NE','L','SE','S','SO','O','NO'];
+    el('hud-compass').textContent=['↑','↗','→','↘','↓','↙','←','↖'][Math.round(((currentHeading%360)+360)%360/45)%8];
+    el('hud-cdeg').textContent=dirs[Math.round(((currentHeading%360)+360)%360/45)%8];
+  }
+
+  // Position marker
+  const hasHdg=currentHeading!=null&&!isNaN(currentHeading);
+  const mHtml=hasHdg
+    ?`<div style="font-size:28px;line-height:1;transform:rotate(${currentHeading}deg);filter:drop-shadow(0 0 5px rgba(88,166,255,.8))">▲</div>`
+    :`<div style="width:14px;height:14px;background:var(--blue);border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 0 rgba(88,166,255,.6);animation:pulse 2s infinite"></div>`;
+  const icon=L.divIcon({html:mHtml,className:'',iconAnchor:[hasHdg?14:7,hasHdg?14:7]});
   if(!posMarker) posMarker=L.marker([lat,lng],{icon,zIndexOffset:1000}).addTo(map);
   else{posMarker.setLatLng([lat,lng]);posMarker.setIcon(icon)}
 
   if(accCircle)map.removeLayer(accCircle);
   accCircle=L.circle([lat,lng],{radius:accuracy,color:'#58a6ff',fillColor:'#58a6ff',fillOpacity:.07,weight:1,opacity:.3}).addTo(map);
 
-  // Follow map — if heading, pan + slight tilt toward heading
-  if(+el('rng-follow').value===1){
+  if(+el('rng-follow').value===1)
     map.setView([lat,lng],+el('rng-zoom').value,{animate:true,duration:.5});
-  }
 
-  // Compass
-  if(hasHeading){
-    const arrows=['↑','↗','→','↘','↓','↙','←','↖'];
-    el('hud-compass-arrow').textContent=arrows[Math.round(((hdg%360)+360)%360/45)%8];
-    el('hud-compass-deg').textContent=Math.round(hdg)+'°';
-  }
+  // Route remaining + turn-by-turn
+  const{nearIdx,distFromStart}=nearestRoutePoint(lat,lng);
+  updRouteRemaining(nearIdx,distFromStart);
+  updInstruction(nearIdx,distFromStart);
 
-  // Route remaining highlight
-  updRouteRemaining(lat,lng);
-  updNextHud();
-  checkArrival(lat,lng,speed);
+  // Arrival check
+  checkArrival(lat,lng);
 
-  // Record if active
-  if(isRecording){
+  // Recording stop detection
+  if(isRec){
+    const velThreshold=+el('rng-recvel').value;
+    const durThreshold=+el('rng-recdur').value;
+    const velKmh=spdKmh!=null?spdKmh:999;
+
+    if(velKmh<velThreshold){
+      if(!recStopCandidate){
+        recStopCandidate={lat,lng,t:Date.now()};
+      } else {
+        const stopDur=(Date.now()-recStopCandidate.t)/1000;
+        if(stopDur>=durThreshold&&!recStopCandidate.marked){
+          recStopCandidate.marked=true;
+          // Mark this as a stop waypoint
+          const stopEntry={lat,lng,t:Date.now(),dur_s:0,startT:recStopCandidate.t};
+          recStops.push(stopEntry);
+          // Visual marker on map
+          const stopIcon=L.divIcon({
+            html:`<div style="background:var(--red);width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 6px var(--red)"></div>`,
+            className:'',iconAnchor:[7,7]
+          });
+          L.marker([lat,lng],{icon:stopIcon}).addTo(map).bindTooltip(`Parada ${recStops.length}`,{permanent:false});
+          el('rec-sc').textContent=`${recStops.length} parada${recStops.length>1?'s':''} detectada${recStops.length>1?'s':''}`;
+        }
+      }
+    } else {
+      // Leaving a stop — record duration
+      if(recStopCandidate?.marked&&recStops.length>0){
+        const lastStop=recStops[recStops.length-1];
+        lastStop.dur_s=Math.round((Date.now()-lastStop.startT)/1000);
+      }
+      recStopCandidate=null;
+    }
+
     recPoints.push({lat,lng,t:Date.now(),speed:speed,alt:altitude});
     const recDist=calcDistRaw(recPoints);
     el('rec-stats').textContent=`${recPoints.length} pts · ${recDist.toFixed(2)} km`;
+
+    // Draw live track
+    if(!recLayer){recLayer=L.polyline([[lat,lng]],{color:'#58a6ff',weight:3,opacity:.85}).addTo(map)}
+    else recLayer.addLatLng([lat,lng]);
   }
 }
 function onGPSErr(err){
@@ -919,61 +1012,50 @@ function onGPSErr(err){
   setGPS('error',m[err.code]||'Erro GPS');
 }
 
-// ── ROUTE REMAINING ───────────────────────────
-function updRouteRemaining(lat,lng){
-  if(!routePts.length)return;
-  // Find nearest point on route
-  let minIdx=0,minDist=Infinity;
+// ── ROUTE REMAINING ────────────────────────────────────
+function nearestRoutePoint(lat,lng){
+  let minIdx=0,minDist=Infinity,cumDist=0,distAtMin=0,running=0;
   routePts.forEach((p,i)=>{
+    if(i>0) running+=haversine(routePts[i-1].lat,routePts[i-1].lon,p.lat,p.lon);
     const d=haversine(lat,lng,p.lat,p.lon);
-    if(d<minDist){minDist=d;minIdx=i}
+    if(d<minDist){minDist=d;minIdx=i;distAtMin=running}
   });
-
-  const donePts=routePts.slice(0,minIdx+1).map(p=>[p.lat,p.lon]);
-  const aheadPts=routePts.slice(minIdx).map(p=>[p.lat,p.lon]);
-  routeDoneLayer.setLatLngs(donePts.length>1?donePts:[]);
-  routeAheadLayer.setLatLngs(aheadPts.length>1?aheadPts:[]);
-
-  // Route progress strip
-  const distDone=calcDist(routePts.slice(0,minIdx+1));
-  const pct=totalRouteDist>0?(distDone/totalRouteDist)*100:0;
-  const distLeft=totalRouteDist-distDone;
-  el('hud-strip-fill').style.width=pct.toFixed(1)+'%';
-  el('hud-strip-done').textContent=pct.toFixed(0)+'%';
-  el('hud-strip-left').textContent=distLeft>=1?distLeft.toFixed(1)+' km restante':(distLeft*1000).toFixed(0)+' m restante';
+  return{nearIdx:minIdx,distFromStart:distAtMin};
 }
 
-// ── NEXT STOP HUD ─────────────────────────────
-function updNextHud(){
-  const pending=stops.filter(s=>s.state!=='done');
-  if(!pending.length){
-    el('hud-name').textContent='Rota concluída!';el('hud-dist').textContent='✓';
-    el('hud-prog').textContent='';
-    el('peek-name').textContent='Todas as paradas concluídas';el('peek-sub').textContent='';
-    el('peek-dist').textContent='';el('peek-arrow').textContent='🏁';return;
-  }
+function updRouteRemaining(nearIdx,distFromStart){
+  if(!routePts.length)return;
+  const done=routePts.slice(0,nearIdx+1).map(p=>[p.lat,p.lon]);
+  const ahead=routePts.slice(nearIdx).map(p=>[p.lat,p.lon]);
+  routeDoneLayer.setLatLngs(done.length>1?done:[]);
+  routeAheadLayer.setLatLngs(ahead.length>1?ahead:[]);
+  const pct=totalRouteDist>0?(distFromStart/totalRouteDist)*100:0;
+  const left=totalRouteDist-distFromStart;
+  el('hud-sfill').style.width=pct.toFixed(1)+'%';
+  el('hud-pct').textContent=pct.toFixed(0)+'%';
+  el('hud-left').textContent=left>=1?left.toFixed(1)+' km':(left*1000).toFixed(0)+' m'+' restante';
+}
+
+// ── INSTRUCTION UPDATE (Waze HUD) ─────────────────────
+function updInstruction(nearIdx,distFromStart){
   if(!currentPos)return;
-  let nearest=null,nearDist=Infinity;
-  pending.forEach(s=>{const d=haversine(currentPos.lat,currentPos.lng,s.lat,s.lng);if(d<nearDist){nearDist=d;nearest=s}});
+  const{dist,icon,label,detail,cls}=getNextManeuver(nearIdx,distFromStart);
+  const iconEl=el('hud-icon');
+  el('hud-icon').textContent=icon;
+  el('hud-icon').className=`hud-instr-icon ${cls}`;
+  el('hud-dist').textContent=dist>0?fmtDist(dist):'';
+  el('hud-action').textContent=label;
+  el('hud-detail').textContent=detail||'';
 
-  const distM=nearDist*1000;
-  const distStr=distM<1000?distM.toFixed(0)+' m':nearDist.toFixed(2)+' km';
-  const bear=bearing(currentPos.lat,currentPos.lng,nearest.lat,nearest.lng);
-  const arrows=['↑','↗','→','↘','↓','↙','←','↖'];
-  const arrow=arrows[Math.round(((bear%360)+360)%360/45)%8];
-
-  el('hud-name').textContent=nearest.name;
-  el('hud-dist').textContent=distStr;
-  el('hud-prog').textContent=nearest.dur_s?`⏱ Programado: ${fmtTime(nearest.dur_s)}`:'';
-
-  el('peek-arrow').textContent=arrow;el('peek-name').textContent=nearest.name;
-  el('peek-sub').textContent=nearest.dur_s?`Programado: ${fmtTime(nearest.dur_s)}`:'';
-  el('peek-dist').textContent=distStr;
-  el('h-speed').textContent=el('hud-spd').textContent!=='0'?el('hud-spd').textContent+' km/h':'—';
+  // Update peek bar
+  el('peek-icon').textContent=icon;
+  el('peek-name').textContent=label;
+  el('peek-sub').textContent=dist>0?fmtDist(dist):'';
+  el('peek-dist').textContent='';
 }
 
-// ── ARRIVAL / DEPARTURE ───────────────────────
-function checkArrival(lat,lng,speed){
+// ── ARRIVAL / DEPARTURE ────────────────────────────────
+function checkArrival(lat,lng){
   const radius=+el('rng-radius').value;
   const autoStart=+el('rng-auto').value===1;
   const autoStop=+el('rng-autostop').value===1;
@@ -986,9 +1068,9 @@ function checkArrival(lat,lng,speed){
       s.state='current';updCardState(s);
       if(autoStart&&!s.running)startTimer(s.id);
       el(`sc-${s.id}`)?.scrollIntoView({behavior:'smooth',block:'nearest'});
-    } else if(distM>radius&&insideStop.has(s.id)){
+    } else if(distM>radius*1.5&&insideStop.has(s.id)){
       insideStop.delete(s.id);
-      if(autoStop&&s.running){pauseTimer(s.id);markDone(s.id);showAlert('departed',`✓ ${s.name} — ${fmtTime(s.elapsed)}`)}
+      if(autoStop&&s.running){pauseTimer(s.id);markDone(s.id);showAlert('departed',`✓ ${s.name} · ${fmtTime(s.elapsed)}`)}
     }
   });
 }
@@ -997,77 +1079,107 @@ function showAlert(type,msg){
   clearTimeout(arrivingTmr);arrivingTmr=setTimeout(()=>{a.style.display='none'},4000);
 }
 
-// ── RECORDING ─────────────────────────────────
-function toggleRecording(){
-  if(!isRecording) startRecording(); else stopRecording();
-}
-function startRecording(){
+// ── RECORDING ──────────────────────────────────────────
+function toggleRec(){if(!isRec)startRec();else stopRec()}
+
+function startRec(){
   if(!navigator.geolocation){alert('Geolocalização não disponível.');return}
-  isRecording=true;recPoints=[];recStartTime=Date.now();
-  el('rec-indicator').classList.add('visible');
-  el('btn-rec').className='btn rec-active';el('btn-rec').textContent='⏹ Parar';
-  // Also start GPS if not active
-  if(!navActive&&watchId===null){
+  // ← Clear existing GPX map layers before recording
+  clearMapLayers();
+  stops=[];insideStop.clear();el('stops-list').innerHTML='';el('stops-badge').textContent='';
+  routePts=[];maneuvers=[];totalRouteDist=0;
+
+  isRec=true;recPoints=[];recStops=[];recStopCandidate=null;
+  el('rec-ind').classList.add('on');
+  el('btn-rec').className='btn rec-on';el('btn-rec').textContent='⏹ Gravando';
+  el('btn-nav').disabled=true;
+
+  if(watchId===null){
     watchId=navigator.geolocation.watchPosition(onGPS,onGPSErr,{enableHighAccuracy:true,maximumAge:1000,timeout:20000});
-    el('spd-stat').style.display='';el('spd-div').style.display='';
-    setGPS('active','Gravando...');
   }
+  setGPS('active','Gravando rota...');
 }
-function stopRecording(){
-  isRecording=false;
-  el('rec-indicator').classList.remove('visible');
+
+function stopRec(){
+  isRec=false;
+  // Close open stop if any
+  if(recStopCandidate?.marked&&recStops.length>0){
+    recStops[recStops.length-1].dur_s=Math.round((Date.now()-recStops[recStops.length-1].startT)/1000);
+  }
+  recStopCandidate=null;
+  el('rec-ind').classList.remove('on');
   el('btn-rec').className='btn rec';el('btn-rec').textContent='⏺ Gravar';
+  el('btn-nav').disabled=false;
+
+  if(!navActive&&watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null}
+
   if(recPoints.length<2){alert('Rota muito curta para salvar.');return}
   const dist=calcDistRaw(recPoints);
   const name=`Rota ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
-  const rec={name,points:[...recPoints],date:new Date(),dist};
-  savedRecordings.push(rec);
-  renderRecCard(rec,savedRecordings.length-1);
-  el('rec-badge').textContent=` (${savedRecordings.length})`;
+  const rec={name,points:[...recPoints],stops:[...recStops],date:new Date(),dist};
+  savedRecs.push(rec);
+  const idx=savedRecs.length-1;
+  renderRecCard(rec,idx);
+  el('rec-badge').textContent=` (${savedRecs.length})`;
   el('rec-empty').style.display='none';
-  // Auto-stop GPS watch if nav not active
-  if(!navActive&&watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null}
+  switchTab('gravadas');
 }
+
 function renderRecCard(rec,idx){
   const list=el('rec-list');
   const card=document.createElement('div');
   card.className='rec-card';card.id=`rcard-${idx}`;
-  const dur=Math.floor((rec.date-new Date(rec.date).setHours(0,0,0,0))/1000)||Math.floor((Date.now()-rec.date)/1000);
+  const stopsInfo=rec.stops.length?`· ${rec.stops.length} parada${rec.stops.length>1?'s':''} detectada${rec.stops.length>1?'s':''}`:' · sem paradas detectadas';
   card.innerHTML=`
     <div class="rec-card-head">
       <span style="font-size:20px">🛤️</span>
       <div>
         <div class="rec-card-name">${rec.name}</div>
-        <div class="rec-card-meta">${rec.dist.toFixed(2)} km · ${rec.points.length} pontos · ${rec.date.toLocaleTimeString('pt-BR')}</div>
+        <div class="rec-card-meta">${rec.dist.toFixed(2)} km · ${rec.points.length} pts ${stopsInfo}</div>
       </div>
     </div>
     <div class="rec-card-btns">
-      <button class="btn go" style="flex:1;font-size:11px;padding:8px 4px" onclick="loadRecording(${idx})">📂 Carregar no mapa</button>
-      <button class="btn primary" style="flex:1;font-size:11px;padding:8px 4px" onclick="downloadRecGPX(${idx})">↓ GPX</button>
-      <button class="btn danger" style="font-size:11px;padding:8px 8px;min-width:36px" onclick="deleteRec(${idx})">✕</button>
+      <button class="btn go"      style="flex:1;font-size:11px;padding:8px 4px" onclick="loadRec(${idx})">📂 Carregar</button>
+      <button class="btn primary" style="flex:1;font-size:11px;padding:8px 4px" onclick="dlRecGPX(${idx})">↓ GPX</button>
+      <button class="btn"         style="font-size:11px;padding:8px 8px;border-color:var(--red);color:var(--red)" onclick="delRec(${idx})">✕</button>
     </div>`;
   list.insertBefore(card,list.firstChild);
 }
-function loadRecording(idx){
-  const rec=savedRecordings[idx];if(!rec)return;
-  if(routeLayer)map.removeLayer(routeLayer);
-  if(routeAheadLayer)map.removeLayer(routeAheadLayer);
-  if(routeDoneLayer)map.removeLayer(routeDoneLayer);
-  routePts=rec.points.map(p=>({lat:p.lat,lon:p.lng}));
-  totalRouteDist=rec.dist;
-  routeLayer=L.polyline(rec.points.map(p=>[p.lat,p.lng]),{color:'rgba(88,166,255,.3)',weight:5}).addTo(map);
-  routeAheadLayer=L.polyline(rec.points.map(p=>[p.lat,p.lng]),{color:'#58a6ff',weight:4,opacity:.9}).addTo(map);
-  routeDoneLayer=L.polyline([],{color:'#444',weight:4}).addTo(map);
+
+function loadRec(idx){
+  const rec=savedRecs[idx];if(!rec)return;
+  clearMapLayers();routePts=rec.points.map(p=>({lat:p.lat,lon:p.lng}));totalRouteDist=rec.dist;
+  const ll=rec.points.map(p=>[p.lat,p.lng]);
+  routeLayer    =L.polyline(ll,{color:'rgba(88,166,255,.25)',weight:6}).addTo(map);
+  routeAheadLayer=L.polyline(ll,{color:'#58a6ff',weight:4}).addTo(map);
+  routeDoneLayer =L.polyline([],{color:'#444',weight:4}).addTo(map);
+  // Stops from recording
+  rec.stops.forEach((s,i)=>{
+    const icon=L.divIcon({html:`<div style="background:var(--red);width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 6px var(--red)"></div>`,className:'',iconAnchor:[7,7]});
+    L.marker([s.lat,s.lng],{icon}).addTo(map).bindTooltip(`Parada ${i+1}${s.dur_s?` · ${fmtTime(s.dur_s)}`:''}`,{permanent:false});
+  });
+  maneuvers=buildManeuvers(routePts);
   map.fitBounds(routeLayer.getBounds(),{padding:[20,20]});
-  el('h-dist').textContent=rec.dist>=1?rec.dist.toFixed(1)+'km':(rec.dist*1000).toFixed(0)+'m';
-  el('btn-nav').disabled=false;el('btn-nav2').disabled=false;
-  el('peek-name').textContent=rec.name;
-  el('peek-sub').textContent=`Rota gravada · ${rec.dist.toFixed(2)} km`;
-  switchTab('rota');sheetState='mid';applySheet();
+  el('btn-nav').disabled=false;
+  el('peek-icon').textContent='🛤️';el('peek-name').textContent=rec.name;
+  el('peek-sub').textContent=`${rec.dist.toFixed(2)} km · ${rec.stops.length} paradas gravadas`;
+  switchTab('rota');shState='mid';applySheet();
 }
-function downloadRecGPX(idx){
-  const rec=savedRecordings[idx];if(!rec)return;
-  let xml=`<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="GPX Navigator Pro">\n<metadata><name>${rec.name}</name><time>${rec.date.toISOString()}</time></metadata>\n<trk><name>${rec.name}</name><trkseg>\n`;
+
+function dlRecGPX(idx){
+  const rec=savedRecs[idx];if(!rec)return;
+  let xml=`<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="GPX Navigator Pro">\n<metadata><name>${rec.name}</name><time>${rec.date.toISOString()}</time></metadata>\n`;
+  // Waypoints (paradas detectadas com duração)
+  rec.stops.forEach((s,i)=>{
+    xml+=`<wpt lat="${s.lat.toFixed(8)}" lon="${s.lng.toFixed(8)}">\n`;
+    xml+=`  <name>Parada ${i+1}</name>\n`;
+    xml+=`  <desc>Duração: ${s.dur_s?fmtTime(s.dur_s):'desconhecida'}</desc>\n`;
+    xml+=`  <cmt>duracao_s=${s.dur_s||0}</cmt>\n`;
+    xml+=`  <time>${new Date(s.t).toISOString()}</time>\n`;
+    xml+=`</wpt>\n`;
+  });
+  // Track
+  xml+=`<trk><name>${rec.name}</name><trkseg>\n`;
   rec.points.forEach(p=>{
     xml+=`<trkpt lat="${p.lat.toFixed(8)}" lon="${p.lng.toFixed(8)}">`;
     if(p.alt!=null)xml+=`<ele>${p.alt.toFixed(1)}</ele>`;
@@ -1080,38 +1192,38 @@ function downloadRecGPX(idx){
   a.href=URL.createObjectURL(new Blob([xml],{type:'application/gpx+xml'}));
   a.download=rec.name.replace(/[^a-z0-9]/gi,'_')+'.gpx';a.click();
 }
-function deleteRec(idx){
-  savedRecordings[idx]=null;
-  el(`rcard-${idx}`)?.remove();
-  const remaining=savedRecordings.filter(Boolean).length;
-  el('rec-badge').textContent=remaining?` (${remaining})`:'';
-  if(!remaining)el('rec-empty').style.display='';
+
+function delRec(idx){
+  savedRecs[idx]=null;el(`rcard-${idx}`)?.remove();
+  const n=savedRecs.filter(Boolean).length;
+  el('rec-badge').textContent=n?` (${n})`:'';
+  if(!n)el('rec-empty').style.display='';
 }
 
-// ── MISC ──────────────────────────────────────
+// ── MISC ───────────────────────────────────────────────
 function focusStop(id){
   const s=stops.find(s=>s.id===id);if(!s)return;
   map.setView([s.lat,s.lng],17,{animate:true});stopMarkers[id]?.openPopup();
-  if(hudSheetOpen){el('hud-stops-panel').classList.remove('visible');hudSheetOpen=false}
-  sheetState='mid';applySheet();
+  el('hud-sp').classList.remove('on');hudPanelOpen=false;
+  shState='mid';applySheet();
 }
 function exportCSV(){
   if(!stops.length){alert('Sem paradas.');return}
   const h='ID,Nome,Lat,Lon,Programado,Realizado,Delta,Status';
-  const rows=stops.map(s=>{const d=s.elapsed-s.dur_s;return `${s.id},"${s.name}",${s.lat.toFixed(6)},${s.lng.toFixed(6)},${fmtTime(s.dur_s)},${fmtTime(s.elapsed)},${s.dur_s?(d>=0?'+':'-')+fmtTime(Math.abs(d)):'—'},${s.state}`});
+  const rows=stops.map(s=>{const d=s.elapsed-s.dur_s;return`${s.id},"${s.name}",${s.lat.toFixed(6)},${s.lng.toFixed(6)},${fmtTime(s.dur_s)},${fmtTime(s.elapsed)},${s.dur_s?(d>=0?'+':'-')+fmtTime(Math.abs(d)):'—'},${s.state}`});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([[h,...rows].join('\n')],{type:'text/csv'}));
-  a.download='paradas_resultado.csv';a.click();
+  a.download='paradas.csv';a.click();
 }
 
-// ── MATH UTILS ────────────────────────────────
+// ── MATH ───────────────────────────────────────────────
 function haversine(la1,lo1,la2,lo2){
   const R=6371,r=Math.PI/180;
   const dLat=(la2-la1)*r,dLon=(lo2-lo1)*r;
   const a=Math.sin(dLat/2)**2+Math.cos(la1*r)*Math.cos(la2*r)*Math.sin(dLon/2)**2;
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
-function bearing(la1,lo1,la2,lo2){
+function brng(la1,lo1,la2,lo2){
   const r=Math.PI/180,dLon=(lo2-lo1)*r;
   return Math.atan2(Math.sin(dLon)*Math.cos(la2*r),Math.cos(la1*r)*Math.sin(la2*r)-Math.sin(la1*r)*Math.cos(la2*r)*Math.cos(dLon))*180/Math.PI;
 }
@@ -1122,7 +1234,7 @@ function fmtDurMs(ms){return fmtTime(Math.floor(ms/1000))}
 function el(id){return document.getElementById(id)}
 function setGPS(state,msg){el('gps-dot').className='gps-dot '+state;el('gps-text').textContent=msg}
 
-// Drag & drop GPX
+// Drag & drop
 map.getContainer().addEventListener('dragover',e=>e.preventDefault());
 map.getContainer().addEventListener('drop',e=>{
   e.preventDefault();const f=e.dataTransfer.files[0];
