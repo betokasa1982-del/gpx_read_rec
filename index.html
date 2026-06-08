@@ -1479,32 +1479,50 @@ function checkArrival(lat,lng){
   const radius=+el('rng-radius').value;
   const autoStart=+el('rng-auto').value===1;
   const autoStop=+el('rng-autostop').value===1;
+
+  // ── Find the single CLOSEST non-done stop for photo preview ──
+  // (forEach would call showStopPhoto for every stop in range,
+  //  showing the LAST one instead of the nearest/correct one)
+  let nearestStop=null, nearestDist=Infinity;
+  stops.forEach(s=>{
+    if(s.state==='done')return;
+    const d=haversine(lat,lng,s.lat,s.lng)*1000;
+    if(d<nearestDist){nearestDist=d;nearestStop=s;}
+  });
+
+  // Pre-show photo of the nearest upcoming stop at 150m
+  if(nearestStop&&nearestDist<=150&&nearestDist>radius&&
+     nearestStop.photo&&nearestStop.photo.length>10&&
+     photoPreviewStopId!==nearestStop.id){
+    showStopPhoto(nearestStop,nearestDist);
+  }
+
+  // ── Arrival / departure checks ────────────────────────────
   stops.forEach(s=>{
     if(s.state==='done')return;
     const distM=haversine(lat,lng,s.lat,s.lng)*1000;
 
-    // Pre-show photo when 150 m away (so driver recognises stop in advance)
-    if(distM<=150&&distM>radius&&s.photo&&s.photo.length>10&&photoPreviewStopId!==s.id){
-      showStopPhoto(s,distM);
-    }
-
     if(distM<=radius&&!insideStop.has(s.id)){
       insideStop.add(s.id);
-      showAlert('arrived',`📍 ${s.name}`);
-      // Show photo overlay at the stop only if a photo was taken
-      if(s.photo&&s.photo.length>10) showStopPhoto(s,distM);
+      showAlert('arrived',`📍 ${s.name}${s.dur_s?' · '+fmtTime(s.dur_s):''}`);
+      // Show this stop's own photo (only if it HAS one)
+      if(s.photo&&s.photo.length>10) showStopPhoto(s,0);
+      else closeStopPhoto(); // clear any previous stop's photo
       s.state='current';updCardState(s);
       if(autoStart&&!s.running)startTimer(s.id);
-      // Open HUD stops panel so driver can see timer
+      speakText(`Arrived at stop ${s.id}${s.dur_s?', planned '+fmtTime(s.dur_s):''}`);
+      lastVoiceKey='';
       el(`sc-${s.id}`)?.scrollIntoView({behavior:'smooth',block:'nearest'});
-      if(!hudPanelOpen){
-        toggleHudPanel(); // open in-map panel
-      } else {
-        renderHudPanel(); // already open — refresh it
-      }
-    } else if(distM>radius*1.3&&insideStop.has(s.id)){  // 1.3x = departs sooner
+      if(!hudPanelOpen) toggleHudPanel();
+      else renderHudPanel();
+
+    } else if(distM>radius*1.3&&insideStop.has(s.id)){
       insideStop.delete(s.id);
-      if(autoStop&&s.running){pauseTimer(s.id);markDone(s.id);showAlert('departed',`✓ ${s.name} · ${fmtTime(s.elapsed)}`);if(photoPreviewStopId===s.id)closeStopPhoto();}
+      if(autoStop&&s.running){
+        pauseTimer(s.id);markDone(s.id);
+        showAlert('departed',`✓ ${s.name} · ${fmtTime(s.elapsed)}`);
+        if(photoPreviewStopId===s.id)closeStopPhoto();
+      }
     }
   });
 }
