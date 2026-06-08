@@ -81,35 +81,33 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
   backdrop-filter:blur(10px);
 }
 /* Arrow box */
+/* ── HUD instruction bar — compact for tablet ── */
 .hud-instr-icon{
-  width:106px;flex-shrink:0;
+  width:82px;flex-shrink:0;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-size:68px;padding:10px 8px;gap:3px;
-  border-right:1px solid var(--border);
-  transition:all .4s;
+  font-size:52px;padding:8px 6px;gap:2px;
+  border-right:1px solid var(--border);transition:all .4s;
 }
-.hud-icon-lbl{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;
+.hud-icon-lbl{font-size:8px;letter-spacing:1px;text-transform:uppercase;
   font-family:var(--mono);color:var(--muted);text-align:center;line-height:1}
-/* Text side */
-.hud-instr-body{flex:1;padding:8px 14px;min-width:0;display:flex;flex-direction:column;justify-content:center}
-.hud-instr-dist{font-size:36px;font-weight:700;font-family:var(--mono);line-height:1;transition:color .4s}
+.hud-instr-body{flex:1;padding:6px 12px;min-width:0;display:flex;flex-direction:column;justify-content:center}
+.hud-instr-dist{font-size:28px;font-weight:700;font-family:var(--mono);line-height:1;transition:color .4s}
 .hud-instr-dist.far   {color:var(--blue)}
 .hud-instr-dist.medium{color:var(--accent)}
 .hud-instr-dist.close {color:var(--red);animation:urgentPulse .8s infinite}
 @keyframes urgentPulse{50%{opacity:.4}}
-.hud-instr-action{font-size:20px;font-weight:700;color:var(--text);margin:3px 0}
+.hud-instr-action{font-size:17px;font-weight:700;color:var(--text);margin:2px 0}
 .hud-instr-detail{font-size:11px;color:var(--muted);font-family:var(--mono)}
-.hud-next-preview{font-size:11px;color:rgba(139,148,158,.7);font-family:var(--mono);
-  margin-top:4px;padding:3px 8px;background:rgba(255,255,255,.05);
+.hud-next-preview{font-size:10px;color:rgba(139,148,158,.7);font-family:var(--mono);
+  margin-top:3px;padding:2px 6px;background:rgba(255,255,255,.05);
   border-radius:4px;display:none}
 .hud-next-preview.visible{display:block}
-/* Speed bubble (right) */
 .hud-instr-speed{
-  width:72px;flex-shrink:0;
+  width:62px;flex-shrink:0;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  border-left:1px solid var(--border);padding:10px 6px;
+  border-left:1px solid var(--border);padding:8px 4px;
 }
-.hud-spd-val{font-size:30px;font-weight:700;font-family:var(--mono);line-height:1}
+.hud-spd-val{font-size:26px;font-weight:700;font-family:var(--mono);line-height:1}
 .hud-spd-unit{font-size:9px;color:var(--muted);font-family:var(--mono);letter-spacing:1px}
 
 /* Instruction colors by type */
@@ -130,31 +128,61 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 
 /* ── ROUTE PROGRESS (bottom strip) ── */
 .hud-strip{
-  position:absolute;bottom:100px;left:12px;right:12px;pointer-events:auto;
-  background:rgba(13,17,23,.9);border:1px solid var(--border);border-radius:10px;
-  padding:9px 14px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(8px);
+  position:absolute;bottom:58px;left:8px;right:8px;pointer-events:auto;
+  background:rgba(13,17,23,.85);border:1px solid var(--border);border-radius:8px;
+  padding:6px 12px;display:flex;align-items:center;gap:10px;backdrop-filter:blur(8px);
 }
 .hud-sbar{flex:1;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
 .hud-sfill{height:100%;background:linear-gradient(90deg,var(--green),var(--accent));border-radius:3px;transition:width .5s}
 .hud-slbl{font-size:11px;font-family:var(--mono);color:var(--muted);white-space:nowrap}
 
 /* Toggle stops panel */
-.hud-toggle{position:absolute;bottom:12px;right:12px;z-index:910;pointer-events:auto;
+.hud-toggle{position:absolute;bottom:10px;right:10px;z-index:910;pointer-events:auto;
   background:rgba(13,17,23,.9);border:1px solid var(--border);border-radius:10px;
   padding:8px 14px;font-family:var(--sans);font-size:12px;font-weight:700;cursor:pointer;
   color:var(--accent);letter-spacing:1px;backdrop-filter:blur(8px);display:none}
 .hud-toggle.on{display:block}
 
-/* Floating stops panel */
+/* Floating stops panel — compact, max 40% screen height */
 .hud-stops-panel{
-  position:absolute;bottom:60px;left:12px;right:12px;z-index:910;pointer-events:auto;
-  background:rgba(13,17,23,.97);border:1px solid var(--border);border-radius:14px;
-  display:none;flex-direction:column;max-height:52vh;overflow:hidden;backdrop-filter:blur(10px);
+  position:absolute;bottom:56px;left:8px;right:8px;z-index:910;pointer-events:auto;
+  background:rgba(13,17,23,.96);border:1px solid var(--border);border-radius:12px;
+  display:none;flex-direction:column;
+  max-height:40vh;   /* never more than 40% of screen */
+  overflow:hidden;backdrop-filter:blur(12px);
+  box-shadow:0 -4px 24px rgba(0,0,0,.5);
 }
 .hud-stops-panel.on{display:flex}
-.hud-sp-head{padding:10px 16px;border-bottom:1px solid var(--border);font-size:11px;
+.hud-sp-head{padding:7px 12px;border-bottom:1px solid var(--border);font-size:10px;
   font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
-  display:flex;justify-content:space-between;align-items:center}
+  display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+
+/* Compact stop row in floating panel */
+.hud-stop-row{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;border-bottom:1px solid rgba(48,54,61,.4);
+  min-height:0;
+}
+.hud-stop-row:last-child{border-bottom:none}
+.hud-stop-row.current{background:rgba(63,185,80,.06)}
+.hud-stop-row.done{opacity:.35}
+.hud-sr-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:11px;font-weight:700;font-family:var(--mono);flex-shrink:0}
+.hud-sr-num.waiting{background:var(--accent);color:#000}
+.hud-sr-num.current{background:var(--green);color:#000;animation:blink 1.2s infinite}
+.hud-sr-num.done{background:var(--muted);color:#000}
+.hud-sr-name{flex:1;font-size:13px;font-weight:700;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.hud-sr-timer{font-size:13px;font-family:var(--mono);color:var(--text);
+  white-space:nowrap;flex-shrink:0}
+.hud-sr-timer.running{color:var(--green)}
+.hud-sr-timer.over{color:var(--red)}
+.hud-sr-done-btn{
+  background:var(--green);color:#000;border:none;border-radius:6px;
+  font-size:11px;font-weight:700;padding:5px 8px;cursor:pointer;
+  flex-shrink:0;white-space:nowrap;font-family:var(--sans);
+}
+.hud-sr-done-btn:active{opacity:.7}
 
 /* ── RECORDING INDICATOR ── */
 .rec-ind{
@@ -231,7 +259,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 /* ── BOTTOM SHEET ── */
 .sheet{position:absolute;bottom:0;left:0;right:0;
   background:var(--panel);border-radius:18px 18px 0 0;border-top:1px solid var(--border);
-  z-index:1000;display:flex;flex-direction:column;max-height:84vh;
+  z-index:1000;display:flex;flex-direction:column;max-height:72vh;
   transition:transform .35s cubic-bezier(.32,.72,0,1);
   transform:translateY(calc(100% - 96px));padding-bottom:var(--safe-b)}
 .sheet.expanded{transform:translateY(0)}
@@ -454,7 +482,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
       Route stops
       <span style="cursor:pointer;color:var(--red);font-size:18px" onclick="toggleHudPanel()">✕</span>
     </div>
-    <div class="stops-list" id="hud-sp-list" style="max-height:44vh"></div>
+    <div id="hud-sp-list" style="overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch"></div>
   </div>
 
   <!-- Hidden camera input -->
@@ -886,28 +914,24 @@ function toggleHudPanel(){
 function renderHudPanel(){
   const c=el('hud-sp-list');c.innerHTML='';
   stops.forEach(s=>{
-    const d=document.createElement('div');
-    d.className=`stop-card state-${s.state}`;
-    const delta=s.elapsed-s.dur_s;
-    const ds=s.dur_s&&s.elapsed>0?(delta>=0?`+${fmtTime(delta)}`:`−${fmtTime(-delta)}`):'';
-    d.innerHTML=`
-      <div class="sc-head">
-        <div class="sc-num ${s.state==='done'?'done':s.state==='current'?'current':'waiting'}">${s.state==='done'?'✓':s.id}</div>
-        <div class="sc-name">${s.name}</div>
-        <span class="sc-badge ${s.state}">${{waiting:'Aguard.',current:'Ativo',done:'Feito'}[s.state]}</span>
+    const row=document.createElement('div');
+    const delta=s.elapsed-(s.dur_s||0);
+    const timerTxt=s.elapsed>0||s.state==='current'?fmtTime(s.elapsed):'—';
+    const planned=s.dur_s?`/${fmtTime(s.dur_s)}`:'';
+    const timerCls=s.running?'running':delta>0&&s.elapsed>0?'over':'';
+    row.className=`hud-stop-row ${s.state}`;
+    row.innerHTML=`
+      <div class="hud-sr-num ${s.state==='done'?'done':s.state==='current'?'current':'waiting'}">
+        ${s.state==='done'?'✓':s.id}
       </div>
-      <div class="sc-times">
-        <div class="sc-time-col"><div class="sc-time-label">PLANNED</div><div class="sc-time-val">${s.dur_s?fmtTime(s.dur_s):'—'}</div></div>
-        <div class="sc-time-col real"><div class="sc-time-label">ACTUAL</div>
-          <div class="sc-time-val ${s.running?'running':s.elapsed>0?'paused':''}">${fmtTime(s.elapsed)}</div>
-          ${ds?`<div class="sc-delta ${delta>0?'over':'ok'}">${ds}</div>`:''}
-        </div>
-      </div>
-      <div class="sc-ctrl">
-        ${s.state!=='done'?`<button class="tbtn ${s.running?'ps':'go'}" onclick="${s.running?'pauseTimer':'startTimer'}(${s.id});renderHudPanel()">${s.running?'⏸':'▶'}</button>`:''}
-        <div class="sc-btns"><button class="sc-btn" onclick="focusStop(${s.id})">🎯 Ver</button></div>
-      </div>`;
-    c.appendChild(d);
+      <div class="hud-sr-name">${s.name}</div>
+      <div class="hud-sr-timer ${timerCls}">${timerTxt}${s.state==='current'?planned:''}</div>
+      ${s.state==='current'?`
+        <button class="hud-sr-done-btn"
+          onclick="markDone(${s.id});renderHudPanel();speakText('Stop ${s.id} done')">
+          ✓ Next
+        </button>`:''}`;
+    c.appendChild(row);
   });
 }
 
@@ -968,34 +992,46 @@ function buildManeuvers(pts){
 
 // Find maneuver to show based on current route index
 function getNextManeuver(curIdx,curDistFromStart){
-  // Also check waypoint stops
+  const radius=+el('rng-radius').value||80;
+
+  // Find nearest non-done stop within 4x radius
   const nextStop=stops.filter(s=>s.state!=='done').find(s=>{
     const d=haversine(currentPos.lat,currentPos.lng,s.lat,s.lng)*1000;
-    return d<+el('rng-radius').value*4; // within 4x arrival radius
+    return d<radius*4;
   });
 
-  // Nearest upcoming maneuver
   const upcoming=maneuvers.filter(m=>m.idx>curIdx&&m.distFromStart>curDistFromStart);
   const nextMan=upcoming[0]||null;
 
-  // If a stop is closer, prioritize it
   if(nextStop){
     const stopDist=haversine(currentPos.lat,currentPos.lng,nextStop.lat,nextStop.lng)*1000;
     const manDist=nextMan?haversine(currentPos.lat,currentPos.lng,nextMan.lat,nextMan.lon)*1000:Infinity;
     if(stopDist<manDist){
-      return{dist:stopDist,icon:'⏸',label:'Make a stop',detail:nextStop.name+(nextStop.dur_s?` · ${fmtTime(nextStop.dur_s)}`:''),cls:'stop',type:'stop'};
+      // AT the stop (inside arrival radius) — show live timer + tap Done to continue
+      if(stopDist<=radius&&nextStop.state==='current'){
+        const elapsed=fmtTime(nextStop.elapsed);
+        const planned=nextStop.dur_s?` / ${fmtTime(nextStop.dur_s)}`:'';
+        return{dist:0,icon:'⏸',
+          label:nextStop.running?`⏱ ${elapsed}${planned}`:'At stop — tap Done',
+          detail:`${nextStop.name} · tap "✓ Done — Next →" to continue`,
+          cls:'stop',type:'stop'};
+      }
+      // Approaching stop
+      return{dist:stopDist,icon:'⏸',label:'Make a stop',
+        detail:nextStop.name+(nextStop.dur_s?` · Planned: ${fmtTime(nextStop.dur_s)}`:''),
+        cls:'stop',type:'stop'};
     }
   }
 
   if(!nextMan) return{dist:0,icon:'🏁',label:'Destination reached',detail:'',cls:'arrive',type:'arrive'};
   const distM=haversine(currentPos.lat,currentPos.lng,nextMan.lat,nextMan.lon)*1000;
-  const afterMan=upcoming[1]?` Depois: ${upcoming[1].label}`:'';
-  return{dist:distM,icon:nextMan.icon,label:nextMan.label,detail:afterMan,cls:nextMan.cls};
+  const afterTxt=upcoming[1]?`Then: ${upcoming[1].label}`:'';
+  return{dist:distM,icon:nextMan.icon,label:nextMan.label,detail:afterTxt,cls:nextMan.cls};
 }
 
 // Format distance for instruction
 function fmtDist(m){
-  if(m<20)  return'aqui';
+  if(m<20)  return'here';
   if(m<1000)return Math.round(m/10)*10+' m';
   return(m/1000).toFixed(1)+' km';
 }
@@ -1466,7 +1502,7 @@ function checkArrival(lat,lng){
       } else {
         renderHudPanel(); // already open — refresh it
       }
-    } else if(distM>radius*1.5&&insideStop.has(s.id)){
+    } else if(distM>radius*1.3&&insideStop.has(s.id)){  // 1.3x = departs sooner
       insideStop.delete(s.id);
       if(autoStop&&s.running){pauseTimer(s.id);markDone(s.id);showAlert('departed',`✓ ${s.name} · ${fmtTime(s.elapsed)}`);if(photoPreviewStopId===s.id)closeStopPhoto();}
     }
