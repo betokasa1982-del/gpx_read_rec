@@ -194,18 +194,32 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 .rec-dot{width:10px;height:10px;border-radius:50%;background:var(--red);animation:blink 1s infinite;flex-shrink:0}
 
 /* ── Photo feature ── */
-/* Camera prompt: floats above stop marker when stop detected */
+/* Camera + events prompt */
 .cam-prompt{
   position:absolute;bottom:170px;left:50%;transform:translateX(-50%);z-index:1600;
   background:var(--panel);border:2px solid var(--accent);border-radius:14px;
-  padding:14px 20px;display:none;flex-direction:column;align-items:center;gap:10px;
-  box-shadow:0 6px 30px rgba(0,0,0,.7);min-width:240px;backdrop-filter:blur(8px);
-  animation:popIn .3s ease;
+  padding:14px 18px;display:none;flex-direction:column;align-items:center;gap:8px;
+  box-shadow:0 6px 30px rgba(0,0,0,.7);min-width:280px;max-width:340px;
+  backdrop-filter:blur(8px);animation:popIn .3s ease;
 }
 .cam-prompt.on{display:flex}
 .cam-prompt-title{font-size:15px;font-weight:700;color:var(--accent);text-align:center}
-.cam-prompt-sub  {font-size:12px;color:var(--muted);text-align:center;font-family:var(--mono)}
-.cam-prompt-btns {display:flex;gap:8px;width:100%}
+.cam-prompt-sub{font-size:11px;color:var(--muted);text-align:center;font-family:var(--mono)}
+.cam-prompt-btns{display:flex;gap:8px;width:100%}
+/* Events section */
+.cam-events-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--muted);font-family:var(--mono);align-self:flex-start}
+.cam-events-row{display:flex;gap:8px;width:100%}
+.evt-btn{flex:1;padding:10px 8px;border-radius:8px;border:2px solid var(--border);
+  background:transparent;color:var(--text);font-family:var(--sans);font-size:13px;
+  font-weight:700;cursor:pointer;text-align:center;transition:all .15s;user-select:none}
+.evt-btn:active{transform:scale(.95)}
+.evt-btn.active{border-color:var(--green);background:rgba(63,185,80,.15);color:var(--green)}
+.cam-divider{width:100%;height:1px;background:var(--border)}
+/* Event badges on stop markers/cards */
+.stop-event-badge{display:inline-flex;align-items:center;gap:3px;
+  font-size:10px;font-family:var(--mono);padding:2px 6px;border-radius:8px;
+  background:rgba(88,166,255,.12);color:var(--blue);margin-left:4px}
 
 /* Stop photo overlay (shown when approaching a stop) */
 .stop-photo-ov{
@@ -500,15 +514,27 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
     <button class="btn stop-nav" style="padding:5px 10px;font-size:11px;min-height:30px" onclick="toggleRec()">■ Stop</button>
   </div>
 
-  <!-- Camera prompt (appears when stop is detected during recording) -->
+  <!-- Stop events + camera prompt -->
   <div class="cam-prompt" id="cam-prompt">
     <div class="cam-prompt-title">📍 Stop <span id="cam-stop-num">1</span> detected</div>
-    <div class="cam-prompt-sub">Take a photo so the driver can<br>recognize this location later</div>
+
+    <div class="cam-events-title">Events at this stop</div>
+    <div class="cam-events-row">
+      <button class="evt-btn" id="evt-door"  onclick="toggleStopEvent('openDoor')">
+        🚪<br>Open Door
+      </button>
+      <button class="evt-btn" id="evt-knee" onclick="toggleStopEvent('kneeling')">
+        ♿<br>Kneeling
+      </button>
+    </div>
+
+    <div class="cam-divider"></div>
+    <div class="cam-prompt-sub">Take a photo so the driver recognises this stop</div>
     <div class="cam-prompt-btns">
       <button class="btn primary" style="flex:2;font-size:13px;padding:10px 8px"
-              onclick="openCamera()">📷 Take Photo</button>
-      <button class="btn" style="flex:1;font-size:12px;padding:10px 6px"
-              onclick="skipPhoto()">Skip</button>
+              onclick="openCamera()">📷 Photo</button>
+      <button class="btn go"      style="flex:2;font-size:13px;padding:10px 8px"
+              onclick="confirmStopEvents()">✓ Done</button>
     </div>
   </div>
 
@@ -650,6 +676,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://unpkg.com/@raruto/leaflet-rotate@0.2.8/dist/leaflet-rotate-src.js"></script>
 <script>
 'use strict';
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
@@ -685,7 +712,7 @@ function saveRecordings(){
         name:r.name, dist:+(r.dist??0)||0,
         date:r.date instanceof Date?r.date.toISOString():r.date,
         points:r.points.map(p=>({lat:p.lat,lng:p.lng,t:p.t})), // compact: no speed/alt
-        stops:r.stops.map(s=>({lat:s.lat,lng:s.lng,t:s.t,dur_s:s.dur_s,photo:s.photo||null}))
+        stops:r.stops.map(s=>({lat:s.lat,lng:s.lng,t:s.t,dur_s:s.dur_s,photo:s.photo||null,events:s.events||[]}))
       }))
     ));
   }catch(e){console.warn('Recordings not saved:',e.message);}
@@ -715,9 +742,31 @@ function openCamera(){
   el('cam-input').click();
 }
 
-function skipPhoto(){
+let pendingStopEvents=[];
+
+function toggleStopEvent(evt){
+  const idx=pendingStopEvents.indexOf(evt);
+  if(idx>=0)pendingStopEvents.splice(idx,1);
+  else pendingStopEvents.push(evt);
+  el('evt-door').classList.toggle('active',pendingStopEvents.includes('openDoor'));
+  el('evt-knee').classList.toggle('active',pendingStopEvents.includes('kneeling'));
+}
+
+function confirmStopEvents(){
+  // Save selected events to this stop
+  if(pendingPhotoStopIdx>=0&&pendingPhotoStopIdx<recStops.length){
+    recStops[pendingPhotoStopIdx].events=[...pendingStopEvents];
+  }
+  pendingStopEvents=[];
+  // Reset button states
+  el('evt-door').classList.remove('active');
+  el('evt-knee').classList.remove('active');
   el('cam-prompt').classList.remove('on');
   pendingPhotoStopIdx=-1;
+}
+
+function skipPhoto(){
+  confirmStopEvents(); // treat skip as confirm with no events/photo
 }
 
 async function handleCameraPhoto(input){
@@ -856,7 +905,7 @@ function calcSpeedFromPoints(lat,lng){
 }
 
 // ── MAP ────────────────────────────────────────────────
-map=L.map('map',{center:[-15,-50],zoom:5,zoomControl:false,tap:true});
+map=L.map('map',{center:[-15,-50],zoom:5,zoomControl:false,tap:true,rotate:true,rotateControl:false,touchRotate:false,shiftKeyRotate:false});
 loadStoredRecordings(); // restore recordings after page reload
 L.control.zoom({position:'bottomleft'}).addTo(map);
 // Map tile layers — Voyager default (readable), Dark for night
@@ -924,7 +973,9 @@ function renderHudPanel(){
       <div class="hud-sr-num ${s.state==='done'?'done':s.state==='current'?'current':'waiting'}">
         ${s.state==='done'?'✓':s.id}
       </div>
-      <div class="hud-sr-name">${s.name}</div>
+      <div class="hud-sr-name">${s.name}${(s.events||[]).map(e=>
+        `<span class="stop-event-badge">${e==='openDoor'?'🚪':e==='kneeling'?'♿':'⚡'}</span>`
+      ).join('')}</div>
       <div class="hud-sr-timer ${timerCls}">${timerTxt}${s.state==='current'?planned:''}</div>
       ${s.state==='current'?`
         <button class="hud-sr-done-btn"
@@ -1139,7 +1190,9 @@ function cardHTML(s){
   return `
   <div class="sc-head">
     <div class="sc-num waiting" id="scnum-${s.id}">${s.id}</div>
-    <div class="sc-name">${s.name}${s.photo?' 📷':''}</div>
+    <div class="sc-name">${s.name}${s.photo?' 📷':''}${(s.events||[]).map(e=>
+      `<span class="stop-event-badge">${e==='openDoor'?'🚪 Door':e==='kneeling'?'♿ Knee':''}</span>`
+    ).join('')}</div>
     <span class="sc-badge waiting" id="scst-${s.id}">Waiting</span>
   </div>
   <div class="sc-times">
@@ -1195,6 +1248,17 @@ function startTimer(id){
     s.elapsed++;
     const d=el(`td-${id}`);if(d)d.textContent=fmtTime(s.elapsed);
     updCardProgress(s);updTotals();if(hudPanelOpen)renderHudPanel();
+    // Auto-complete when planned time is reached
+    if(s.dur_s>0&&s.elapsed>=s.dur_s&&s.running){
+      clearInterval(s.intervalId);s.running=false;
+      setTimeout(()=>{
+        markDone(s.id);
+        closeStopPhoto();
+        if(hudPanelOpen)renderHudPanel();
+        showAlert('arrived','✓ Stop '+s.id+' — time complete. Proceed to next stop.');
+        speakText('Stop '+s.id+' time complete. Proceed to the next stop.');
+      },800);
+    }
   },1000);
   const d=el(`td-${id}`);if(d)d.className='sc-time-val running';
   el(`tbgo-${id}`).style.display='none';el(`tbps-${id}`).style.display='';
@@ -1305,8 +1369,22 @@ function onGPS(pos){
   if(accCircle)map.removeLayer(accCircle);
   accCircle=L.circle([lat,lng],{radius:accuracy,color:'#58a6ff',fillColor:'#58a6ff',fillOpacity:.07,weight:1,opacity:.3}).addTo(map);
 
-  if(+el('rng-follow').value===1)
-    map.setView([lat,lng],+el('rng-zoom').value,{animate:true,duration:.5});
+  if(+el('rng-follow').value===1){
+    const zoom=+el('rng-zoom').value;
+    if((navActive||isRec)&&currentHeading!=null&&map.setBearing){
+      // Heading-up: rotate map to put direction of travel at top
+      map.setBearing(currentHeading);
+      // Offset center slightly behind vehicle (show more route ahead)
+      const hr=currentHeading*Math.PI/180;
+      const offM=40; // metres behind
+      const dLat=Math.cos(hr+Math.PI)*offM/111320;
+      const dLng=Math.sin(hr+Math.PI)*offM/(111320*Math.cos(lat*Math.PI/180));
+      map.setView([lat+dLat,lng+dLng],zoom,{animate:true,duration:.4,noMoveStart:true});
+    }else{
+      if(map.setBearing) map.setBearing(0); // north-up when stopped
+      map.setView([lat,lng],zoom,{animate:true,duration:.5});
+    }
+  }
 
   // Route remaining + turn-by-turn
   const{nearIdx,distFromStart}=nearestRoutePoint(lat,lng);
@@ -1490,11 +1568,21 @@ function checkArrival(lat,lng){
     if(d<nearestDist){nearestDist=d;nearestStop=s;}
   });
 
-  // Pre-show photo of the nearest upcoming stop at 150m
-  if(nearestStop&&nearestDist<=150&&nearestDist>radius&&
-     nearestStop.photo&&nearestStop.photo.length>10&&
-     photoPreviewStopId!==nearestStop.id){
-    showStopPhoto(nearestStop,nearestDist);
+  // Pre-show photo + announce events of the nearest upcoming stop at 200m
+  if(nearestStop&&nearestDist<=200&&nearestDist>radius){
+    // Photo preview
+    if(nearestStop.photo&&nearestStop.photo.length>10&&photoPreviewStopId!==nearestStop.id){
+      showStopPhoto(nearestStop,nearestDist);
+    }
+    // Announce events only once per stop approach
+    const evtKey='evt_ann_'+nearestStop.id;
+    if(nearestStop.events?.length&&lastVoiceKey!==evtKey){
+      lastVoiceKey=evtKey;
+      const msgs=[];
+      if(nearestStop.events.includes('openDoor'))msgs.push('open doors');
+      if(nearestStop.events.includes('kneeling'))msgs.push('kneeling');
+      if(msgs.length)speakText(`Stop ${nearestStop.id}: ${msgs.join(' and ')} required`);
+    }
   }
 
   // ── Arrival / departure checks ────────────────────────────
