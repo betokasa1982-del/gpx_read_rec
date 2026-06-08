@@ -120,7 +120,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 
 /* ── COMPASS (right side of map, below instruction) ── */
 .hud-compass{
-  position:absolute;right:12px;top:115px;pointer-events:auto;
+  position:absolute;right:12px;top:100px;pointer-events:auto;
   background:rgba(13,17,23,.9);border:1px solid var(--border);border-radius:50%;
   width:60px;height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;
   backdrop-filter:blur(8px);
@@ -345,7 +345,9 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 /* Leaflet */
 .leaflet-container{background:#1a1f2e}
 .leaflet-control-zoom a{background:var(--panel)!important;color:var(--text)!important;border-color:var(--border)!important;font-size:18px!important;width:36px!important;height:36px!important;line-height:36px!important}
-.leaflet-control-zoom{margin-bottom:110px!important;margin-right:12px!important}
+.leaflet-control-zoom{margin-bottom:110px!important;margin-left:12px!important}
+/* Keep zoom buttons larger for touch */
+.leaflet-control-zoom a{touch-action:manipulation}
 .leaflet-popup-content-wrapper{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:8px}
 .leaflet-popup-tip{background:var(--panel)}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -371,6 +373,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
     <button class="btn primary" onclick="el('gpx-file').click()" style="min-width:38px;padding:7px">📂</button>
     <input type="file" id="gpx-file" accept=".gpx" style="display:none" onchange="loadGPX(this)">
     <button class="btn rec" id="btn-rec" onclick="toggleRec()">⏺ Rec</button>
+    <button id="map-style-btn" onclick="toggleMapStyle()" title="Toggle day/night map"
+      style="background:var(--panel);border:1px solid var(--border);border-radius:6px;
+             padding:7px 10px;font-size:16px;cursor:pointer;min-height:38px;
+             color:var(--text);transition:all .15s;user-select:none">🌙</button>
     <button class="btn go"       id="btn-nav"  onclick="startNav()" disabled>▶ Nav</button>
     <button class="btn stop-nav" id="btn-stop" onclick="stopNav()"  style="display:none">■ Parar</button>
   </div>
@@ -424,7 +430,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
     </div>
     <!-- Voice toggle -->
     <div id="hud-voice" onclick="toggleVoice()" title="Voice on/off" style="
-      position:absolute;right:12px;top:86px;z-index:910;pointer-events:auto;
+      position:absolute;right:12px;top:170px;z-index:910;pointer-events:auto;
       background:rgba(13,17,23,.9);border:2px solid var(--green);border-radius:50%;
       width:46px;height:46px;display:none;align-items:center;justify-content:center;
       cursor:pointer;font-size:20px;transition:all .2s;user-select:none">🔊</div>
@@ -438,7 +444,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
   </div>
 
   <!-- Sheet toggle button -->
-  <div class="hud-toggle" id="hud-toggle" onclick="toggleHudPanel()">📍 Paradas</div>
+  <div class="hud-toggle" id="hud-toggle" onclick="toggleHudPanel()">📍 Stops</div>
 
   <!-- Floating stops panel -->
   <div class="hud-stops-panel" id="hud-sp">
@@ -509,7 +515,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
       <span id="peek-icon" style="font-size:22px;flex-shrink:0">🗺️</span>
       <div class="peek-left">
         <div class="peek-name" id="peek-name">Load a GPX file</div>
-        <div class="peek-sub"  id="peek-sub">Toque 📂 para começar</div>
+        <div class="peek-sub"  id="peek-sub">Tap 📂 to open a file</div>
       </div>
       <div class="peek-dist" id="peek-dist"></div>
     </div>
@@ -526,7 +532,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
       <div class="upload-zone">
         <input type="file" accept=".gpx" onchange="loadGPX(this)">
         <div class="icon">📂</div>
-        <strong>Carregar GPX</strong>
+        <strong>Load GPX</strong>
         <p>Gerado pelo conversor_mat_gpx.py</p>
       </div>
       <div id="route-details" style="display:none;flex-direction:column">
@@ -537,7 +543,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
             <div class="ri-item"><div class="ril">Stops</div><div class="riv" id="ri-wpts">—</div></div>
             <div class="ri-item"><div class="ril">Planned time</div><div class="riv" id="ri-tprog">—</div></div>
             <div class="ri-item"><div class="ril">Curvas</div><div class="riv" id="ri-turns">—</div></div>
-            <div class="ri-item"><div class="ril">Manobras</div><div class="riv" id="ri-maneuvers">—</div></div>
+            <div class="ri-item"><div class="ril">Maneuvers</div><div class="riv" id="ri-maneuvers">—</div></div>
           </div>
         </div>
         <div style="padding:0 14px 14px;display:flex;gap:8px">
@@ -577,8 +583,8 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
           <input type="range" min="1" max="15" value="5" id="rng-recvel" oninput="el('val-recvel').textContent=this.value">
           <span class="val" id="val-recvel">5</span></div>
         <div class="nav-field"><label>Dur. mín. stop rec. (s)</label>
-          <input type="range" min="5" max="60" value="10" id="rng-recdur" oninput="el('val-recdur').textContent=this.value+'s'">
-          <span class="val" id="val-recdur">10s</span></div>
+          <input type="range" min="3" max="60" value="5"  id="rng-recdur" oninput="el('val-recdur').textContent=this.value+'s'">
+          <span class="val" id="val-recdur">5s</span></div>
         <div style="display:flex;gap:8px;padding-top:4px">
           <button class="btn go"       id="btn-nav3"  style="flex:1" onclick="startNav()">▶ Start GPS</button>
           <button class="btn stop-nav" id="btn-stop3" style="flex:1;display:none" onclick="stopNav()">■ Parar</button>
@@ -606,7 +612,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
       <div class="rec-list" id="rec-list">
         <div class="empty" id="rec-empty">
           <div class="icon">⏺</div>
-          <p>Toque <strong style="color:var(--red)">⏺ Rec</strong> para registrar uma nova rota.<br>Paradas são detectadas automaticamente pela velocidade.</p>
+          <p>Tap <strong style="color:var(--red)">⏺ Rec</strong> to record a new route. Stops are detected automatically by speed.</p>
         </div>
       </div>
     </div>
@@ -786,10 +792,36 @@ function calcSpeedFromPoints(lat,lng){
 }
 
 // ── MAP ────────────────────────────────────────────────
-map=L.map('map',{center:[-15,-50],zoom:5,zoomControl:true,tap:true});
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+map=L.map('map',{center:[-15,-50],zoom:5,zoomControl:false,tap:true});
+L.control.zoom({position:'bottomleft'}).addTo(map);
+// Map tile layers — Voyager default (readable), Dark for night
+const TILES={
+  day: {
+    url:'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    label:'☀️'
+  },
+  night: {
+    url:'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    label:'🌙'
+  }
+};
+let currentTile='day';
+let tileLayer=L.tileLayer(TILES.day.url,{
   attribution:'&copy; OpenStreetMap &copy; CARTO',subdomains:'abcd',maxZoom:20
 }).addTo(map);
+
+function toggleMapStyle(){
+  currentTile=currentTile==='day'?'night':'day';
+  map.removeLayer(tileLayer);
+  tileLayer=L.tileLayer(TILES[currentTile].url,{
+    attribution:'&copy; OpenStreetMap &copy; CARTO',subdomains:'abcd',maxZoom:20
+  }).addTo(map);
+  // TileLayer goes under other layers — bring route/markers to front
+  [routeLayer,routeDoneLayer,routeAheadLayer,recLayer].forEach(l=>l?.bringToFront());
+  Object.values(stopMarkers).forEach(m=>m?.bringToFront?.());
+  const btn=el('map-style-btn');
+  if(btn) btn.textContent=TILES[currentTile==='day'?'night':'day'].label;
+}
 
 // ── SHEET ──────────────────────────────────────────────
 let shState='mid',tsY=0;
@@ -978,7 +1010,7 @@ function parseGPX(xml,filename){
   doc.querySelectorAll('wpt').forEach((w,i)=>{
     const lat=parseFloat(w.getAttribute('lat')),lon=parseFloat(w.getAttribute('lon'));
     if(isNaN(lat)||isNaN(lon))return;
-    const name=w.querySelector('name')?.textContent||`Parada ${i+1}`;
+    const name=w.querySelector('name')?.textContent||`Stop ${i+1}`;
     const desc=w.querySelector('desc')?.textContent||'';
     const cmt =w.querySelector('cmt')?.textContent||'';
     let dur_s=0;
@@ -1010,7 +1042,7 @@ function parseGPX(xml,filename){
   el('stops-empty').style.display=stops.length?'none':'';
   el('btn-nav').disabled=false;el('btn-nav2').disabled=false;
   el('peek-icon').textContent='🗺️';el('peek-name').textContent=filename;
-  el('peek-sub').textContent=`${stops.length} paradas · ${maneuvers.filter(m=>m.type!=='arrive').length} manobras`;
+  el('peek-sub').textContent=`${stops.length} stops · ${maneuvers.filter(m=>m.type!=='arrive').length} maneuvers`;
   updSummaryBar();switchTab('rota');shState='mid';applySheet();
 }
 
@@ -1069,7 +1101,7 @@ function updCardProgress(s){
   if(bar){bar.style.width=Math.min(pct,100)+'%';bar.style.background=pct<90?'var(--green)':pct<100?'var(--accent)':'var(--red)'}
   const delta=s.elapsed-s.dur_s;
   const dEl=el(`scd-${s.id}`);
-  if(dEl&&s.elapsed>0){dEl.className=`sc-delta ${delta<=0?'ok':delta<60?'warn':'over'}`;dEl.textContent=delta<=0?`−${fmtTime(-delta)} adiantado`:`+${fmtTime(delta)} atraso`}
+  if(dEl&&s.elapsed>0){dEl.className=`sc-delta ${delta<=0?'ok':delta<60?'warn':'over'}`;dEl.textContent=delta<=0?`−${fmtTime(-delta)} ahead`:`+${fmtTime(delta)} delay`}
   const tdEl=el(`td-${s.id}`);
   if(tdEl)tdEl.className=`sc-time-val${s.running?' running':s.elapsed>0?' paused':''}${delta>0&&s.elapsed>0?' over':''}`;
 }
@@ -1143,7 +1175,7 @@ function updSummaryBar(){
 // ── NAVIGATION ─────────────────────────────────────────
 function startNav(){
   if(navActive)return;
-  if(!navigator.geolocation){alert('Geolocalização não disponível.');return}
+  if(!navigator.geolocation){alert('Geolocation not available.');return}
   navActive=true;
   el('btn-nav').style.display='none';el('btn-nav2').style.display='none';
   el('btn-stop').style.display='';el('btn-nav3').style.display='none';el('btn-stop3').style.display='';
@@ -1225,8 +1257,16 @@ function onGPS(pos){
     if(velKmh<velThreshold){
       if(!recStopCandidate){
         recStopCandidate={lat,lng,t:Date.now()};
+        el('rec-sc').textContent='🔴 Slowing down...';
       } else {
-        const stopDur=(Date.now()-recStopCandidate.t)/1000;
+        const stopDur=Math.round((Date.now()-recStopCandidate.t)/1000);
+        // Show live countdown immediately
+        if(!recStopCandidate.marked){
+          const remaining=Math.max(0,durThreshold-stopDur);
+          el('rec-sc').textContent=remaining>0
+            ?`🔴 Stopped: ${stopDur}s / ${durThreshold}s (${remaining}s to register)`
+            :'📍 Registering stop...';
+        }
         if(stopDur>=durThreshold&&!recStopCandidate.marked){
           recStopCandidate.marked=true;
           // Mark this as a stop waypoint
@@ -1256,6 +1296,10 @@ function onGPS(pos){
       if(recStopCandidate?.marked&&recStops.length>0){
         const lastStop=recStops[recStops.length-1];
         lastStop.dur_s=Math.round((Date.now()-lastStop.startT)/1000);
+      }
+      if(recStopCandidate&&!recStopCandidate.marked){
+        // Was slowing but didn't reach threshold — reset counter
+        el('rec-sc').textContent=`${recStops.length} stop${recStops.length>1?'s':''} detected${recStops.filter(s=>s.photo).length?' ('+recStops.filter(s=>s.photo).length+' with photo)':''}`;
       }
       recStopCandidate=null;
     }
@@ -1393,7 +1437,7 @@ function showAlert(type,msg){
 function toggleRec(){if(!isRec)startRec();else stopRec()}
 
 function startRec(){
-  if(!navigator.geolocation){alert('Geolocalização não disponível.');return}
+  if(!navigator.geolocation){alert('Geolocation not available.');return}
   // ← Clear existing GPX map layers before recording
   clearMapLayers();
   stops=[];insideStop.clear();el('stops-list').innerHTML='';el('stops-badge').textContent='';
@@ -1401,7 +1445,7 @@ function startRec(){
 
   isRec=true;recPoints=[];recStops=[];recStopCandidate=null;
   el('rec-ind').classList.add('on');
-  el('btn-rec').className='btn rec-on';el('btn-rec').textContent='⏹ Gravando';
+  el('btn-rec').className='btn rec-on';el('btn-rec').textContent='⏹ Recording';
   el('btn-nav').disabled=true;
 
   if(watchId===null){
@@ -1419,15 +1463,15 @@ function stopRec(){
   }
   recStopCandidate=null;
   el('rec-ind').classList.remove('on');
-  el('btn-rec').className='btn rec';el('btn-rec').textContent='⏺ Gravar';
+  el('btn-rec').className='btn rec';el('btn-rec').textContent='⏺ Rec';
   el('btn-nav').disabled=false;
   if(!navActive) releaseWakeLock();
 
   if(!navActive&&watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null}
 
-  if(recPoints.length<2){alert('Rota muito curta para salvar.');return}
+  if(recPoints.length<2){alert('Route too short to save.');return}
   const dist=calcDistRaw(recPoints);
-  const name=`Rota ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
+  const name=`Route ${new Date().toLocaleDateString('en-GB')} ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`;
   const rec={name,points:[...recPoints],stops:[...recStops],date:new Date(),dist};
   savedRecs.push(rec);
   const idx=savedRecs.length-1;
@@ -1441,7 +1485,7 @@ function renderRecCard(rec,idx){
   const list=el('rec-list');
   const card=document.createElement('div');
   card.className='rec-card';card.id=`rcard-${idx}`;
-  const stopsInfo=rec.stops.length?`· ${rec.stops.length} parada${rec.stops.length>1?'s':''} detectada${rec.stops.length>1?'s':''}`:' · sem paradas detectadas';
+  const stopsInfo=rec.stops.length?`· ${rec.stops.length} stop${rec.stops.length>1?'s':''} detected`:' · no stops detected';
   card.innerHTML=`
     <div class="rec-card-head">
       <span style="font-size:20px">🛤️</span>
@@ -1451,7 +1495,7 @@ function renderRecCard(rec,idx){
       </div>
     </div>
     <div class="rec-card-btns">
-      <button class="btn go"      style="flex:1;font-size:11px;padding:8px 4px" onclick="loadRec(${idx})">📂 Carregar</button>
+      <button class="btn go"      style="flex:1;font-size:11px;padding:8px 4px" onclick="loadRec(${idx})">📂 Load</button>
       <button class="btn primary" style="flex:1;font-size:11px;padding:8px 4px" onclick="dlRecGPX(${idx})">↓ GPX</button>
       <button class="btn"         style="font-size:11px;padding:8px 8px;border-color:var(--red);color:var(--red)" onclick="delRec(${idx})">✕</button>
     </div>`;
@@ -1460,7 +1504,11 @@ function renderRecCard(rec,idx){
 
 function loadRec(idx){
   const rec=savedRecs[idx];if(!rec)return;
-  clearMapLayers();routePts=rec.points.map(p=>({lat:p.lat,lon:p.lng}));totalRouteDist=rec.dist;
+  clearMapLayers();
+  routePts=rec.points.map(p=>({lat:p.lat,lon:p.lng}));
+  buildCumDist(routePts);
+  totalRouteDist=routeCumDist[routeCumDist.length-1]||rec.dist;
+  lastRouteIdx=0;
   const ll=rec.points.map(p=>[p.lat,p.lng]);
   routeLayer    =L.polyline(ll,{color:'rgba(88,166,255,.25)',weight:6}).addTo(map);
   routeAheadLayer=L.polyline(ll,{color:'#58a6ff',weight:4}).addTo(map);
@@ -1496,18 +1544,18 @@ function loadRec(idx){
   map.fitBounds(routeLayer.getBounds(),{padding:[20,20]});
   el('btn-nav').disabled=false;
   el('peek-icon').textContent='🛤️';el('peek-name').textContent=rec.name;
-  el('peek-sub').textContent=`${rec.dist.toFixed(2)} km · ${rec.stops.length} paradas gravadas`;
+  el('peek-sub').textContent=`${rec.dist.toFixed(2)} km · ${rec.stops.length} recorded stops`;
   switchTab('rota');shState='mid';applySheet();
 }
 
 function dlRecGPX(idx){
   const rec=savedRecs[idx];if(!rec)return;
   let xml=`<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="GPX Navigator Pro">\n<metadata><name>${rec.name}</name><time>${rec.date.toISOString()}</time></metadata>\n`;
-  // Waypoints (paradas detectadas com duração)
+  // Waypoints (detected stops with duration)
   rec.stops.forEach((s,i)=>{
     xml+=`<wpt lat="${s.lat.toFixed(8)}" lon="${s.lng.toFixed(8)}">\n`;
-    xml+=`  <name>Parada ${i+1}</name>\n`;
-    xml+=`  <desc>Duração: ${s.dur_s?fmtTime(s.dur_s):'desconhecida'}</desc>\n`;
+    xml+=`  <name>Stop ${i+1}</name>\n`;
+    xml+=`  <desc>Duration: ${s.dur_s?fmtTime(s.dur_s):'unknown'}</desc>\n`;
     xml+=`  <cmt>duracao_s=${s.dur_s||0}</cmt>\n`;
     xml+=`  <time>${new Date(s.t).toISOString()}</time>\n`;
     xml+=`</wpt>\n`;
@@ -1542,12 +1590,12 @@ function focusStop(id){
   shState='mid';applySheet();
 }
 function exportCSV(){
-  if(!stops.length){alert('Sem paradas.');return}
-  const h='ID,Nome,Lat,Lon,Programado,Realizado,Delta,Status';
+  if(!stops.length){alert('No stops to export.');return}
+  const h='ID,Name,Lat,Lon,Planned,Actual,Delta,Status';
   const rows=stops.map(s=>{const d=s.elapsed-s.dur_s;return`${s.id},"${s.name}",${s.lat.toFixed(6)},${s.lng.toFixed(6)},${fmtTime(s.dur_s)},${fmtTime(s.elapsed)},${s.dur_s?(d>=0?'+':'-')+fmtTime(Math.abs(d)):'—'},${s.state}`});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([[h,...rows].join('\n')],{type:'text/csv'}));
-  a.download='paradas.csv';a.click();
+  a.download='stops_report.csv';a.click();
 }
 
 // ── MATH ───────────────────────────────────────────────
