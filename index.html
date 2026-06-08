@@ -181,26 +181,28 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);display:flex
 
 /* Stop photo overlay (shown when approaching a stop) */
 .stop-photo-ov{
-  position:absolute;bottom:100px;left:12px;right:12px;z-index:1400;
+  position:absolute;
+  top:90px;right:12px;       /* top-right corner, below HUD bar */
+  width:190px;               /* compact 190px */
+  z-index:1400;
   display:none;flex-direction:column;
-  border-radius:14px;overflow:hidden;
-  box-shadow:0 6px 30px rgba(0,0,0,.8);
-  animation:slideUp .3s ease;
-  max-height:45vh;
+  border-radius:10px;overflow:hidden;
+  box-shadow:0 4px 20px rgba(0,0,0,.75);
+  border:1px solid var(--border);
+  animation:fadeIn .3s ease;
 }
 .stop-photo-ov.on{display:flex}
-@keyframes slideUp{from{transform:translateY(20px);opacity:0}}
 .stop-photo-header{
-  background:rgba(13,17,23,.95);padding:8px 14px;
+  background:rgba(13,17,23,.96);padding:5px 8px;
   display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
-  border-bottom:1px solid var(--border);
 }
-.stop-photo-name{font-size:14px;font-weight:700;color:var(--accent)}
-.stop-photo-badge{font-size:10px;font-family:var(--mono);color:var(--muted)}
-.stop-photo-close{font-size:20px;cursor:pointer;color:var(--muted);font-weight:700;padding:0 4px}
-.stop-photo-img{width:100%;object-fit:cover;max-height:38vh;display:block;flex-shrink:1}
-.stop-photo-none{background:rgba(13,17,23,.9);padding:20px;text-align:center;color:var(--muted);
-  font-size:13px;font-family:var(--mono)}
+.stop-photo-name{font-size:12px;font-weight:700;color:var(--accent);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+.stop-photo-close{font-size:16px;cursor:pointer;color:var(--muted);padding:0 2px;flex-shrink:0}
+.stop-photo-img{width:190px;height:130px;object-fit:cover;display:block}
+.stop-photo-none{background:rgba(13,17,23,.9);padding:14px;text-align:center;
+  color:var(--muted);font-size:11px;font-family:var(--mono);height:80px;
+  display:flex;align-items:center;justify-content:center}
 
 /* Photo thumbnail in stop card */
 .sc-photo{width:100%;height:90px;object-fit:cover;display:block;
@@ -645,7 +647,38 @@ const insideStop=new Set();
 // Recording state
 let isRec=false, recPoints=[], recStops=[], recStopCandidate=null;
 let savedRecs=[];
-let pendingPhotoStopIdx=-1;   // which stop is waiting for a photo
+let pendingPhotoStopIdx=-1;
+
+// ── Persist recordings across page reloads ───────────
+function saveRecordings(){
+  try{
+    localStorage.setItem('gpx-nav-recs', JSON.stringify(
+      savedRecs.filter(Boolean).map(r=>({
+        name:r.name, dist:r.dist,
+        date:r.date instanceof Date?r.date.toISOString():r.date,
+        points:r.points.map(p=>({lat:p.lat,lng:p.lng,t:p.t})), // compact: no speed/alt
+        stops:r.stops.map(s=>({lat:s.lat,lng:s.lng,t:s.t,dur_s:s.dur_s,photo:s.photo||null}))
+      }))
+    ));
+  }catch(e){console.warn('Recordings not saved:',e.message);}
+}
+
+function loadStoredRecordings(){
+  try{
+    const raw=localStorage.getItem('gpx-nav-recs');
+    if(!raw)return;
+    const parsed=JSON.parse(raw);
+    parsed.forEach(r=>{
+      const rec={...r,date:new Date(r.date)};
+      savedRecs.push(rec);
+      renderRecCard(rec,savedRecs.length-1);
+    });
+    if(savedRecs.length){
+      el('rec-badge').textContent=` (${savedRecs.length})`;
+      el('rec-empty').style.display='none';
+    }
+  }catch(e){console.warn('Recordings not loaded:',e.message);}
+}   // which stop is waiting for a photo
 let photoPreviewStopId=null;  // which stop photo is showing in overlay
 
 // ── Photo helpers ────────────────────────────────────
@@ -668,6 +701,7 @@ async function handleCameraPhoto(input){
     updateStopMarkerPhoto(pendingPhotoStopIdx);
     el('rec-sc').textContent=`${recStops.length} stop${recStops.length>1?'s':''} detected (${recStops.filter(s=>s.photo).length} with photo)`;
     speakText('Photo saved for stop '+(pendingPhotoStopIdx+1));
+  saveRecordings();
   }
   pendingPhotoStopIdx=-1;
 }
@@ -695,18 +729,20 @@ function updateStopMarkerPhoto(stopIdx){
 }
 
 // ── Stop photo overlay (navigation mode) ─────────────
+let photoAutoClose=null;
 function showStopPhoto(stop,distM){
+  if(!stop||!stop.photo) return; // no photo — nothing to show
   const ov=el('stop-photo-ov');
   el('spo-name').textContent=stop.name||`Stop ${stop.id}`;
-  el('spo-badge').textContent=distM<50?'At stop':`Approaching — ${Math.round(distM)} m`;
-  if(stop.photo){
-    el('spo-img').src=stop.photo;el('spo-img').style.display='block';
-    el('spo-none').style.display='none';
-  } else {
-    el('spo-img').style.display='none';el('spo-none').style.display='block';
-  }
+  el('spo-badge').textContent=distM<50?'At stop':`${Math.round(distM)} m ahead`;
+  el('spo-img').src=stop.photo;
+  el('spo-img').style.display='block';
+  el('spo-none').style.display='none';
   ov.classList.add('on');
   photoPreviewStopId=stop.id;
+  // Auto-close after 12s so it doesn't block the screen
+  clearTimeout(photoAutoClose);
+  photoAutoClose=setTimeout(closeStopPhoto,12000);
 }
 function closeStopPhoto(){
   el('stop-photo-ov').classList.remove('on');
@@ -793,6 +829,7 @@ function calcSpeedFromPoints(lat,lng){
 
 // ── MAP ────────────────────────────────────────────────
 map=L.map('map',{center:[-15,-50],zoom:5,zoomControl:false,tap:true});
+loadStoredRecordings(); // restore recordings after page reload
 L.control.zoom({position:'bottomleft'}).addTo(map);
 // Map tile layers — Voyager default (readable), Dark for night
 const TILES={
@@ -1270,7 +1307,8 @@ function onGPS(pos){
         if(stopDur>=durThreshold&&!recStopCandidate.marked){
           recStopCandidate.marked=true;
           // Mark this as a stop waypoint
-          const stopEntry={lat,lng,t:Date.now(),dur_s:0,startT:recStopCandidate.t};
+          const stopT=recStopCandidate.t; // when vehicle first stopped
+          const stopEntry={lat,lng,t:Date.now(),dur_s:0,startT:stopT};
           recStops.push(stopEntry);
           // Visual marker on map
           const sNum=recStops.length;
@@ -1410,18 +1448,24 @@ function checkArrival(lat,lng){
     const distM=haversine(lat,lng,s.lat,s.lng)*1000;
 
     // Pre-show photo when 150 m away (so driver recognises stop in advance)
-    if(distM<=150&&distM>radius&&s.photo&&photoPreviewStopId!==s.id){
+    if(distM<=150&&distM>radius&&s.photo&&s.photo.length>10&&photoPreviewStopId!==s.id){
       showStopPhoto(s,distM);
     }
 
     if(distM<=radius&&!insideStop.has(s.id)){
       insideStop.add(s.id);
       showAlert('arrived',`📍 ${s.name}`);
-      // Show/update photo overlay at the stop
-      if(s.photo||true) showStopPhoto(s,distM);
+      // Show photo overlay at the stop only if a photo was taken
+      if(s.photo&&s.photo.length>10) showStopPhoto(s,distM);
       s.state='current';updCardState(s);
       if(autoStart&&!s.running)startTimer(s.id);
+      // Open HUD stops panel so driver can see timer
       el(`sc-${s.id}`)?.scrollIntoView({behavior:'smooth',block:'nearest'});
+      if(!hudPanelOpen){
+        toggleHudPanel(); // open in-map panel
+      } else {
+        renderHudPanel(); // already open — refresh it
+      }
     } else if(distM>radius*1.5&&insideStop.has(s.id)){
       insideStop.delete(s.id);
       if(autoStop&&s.running){pauseTimer(s.id);markDone(s.id);showAlert('departed',`✓ ${s.name} · ${fmtTime(s.elapsed)}`);if(photoPreviewStopId===s.id)closeStopPhoto();}
@@ -1478,6 +1522,7 @@ function stopRec(){
   renderRecCard(rec,idx);
   el('rec-badge').textContent=` (${savedRecs.length})`;
   el('rec-empty').style.display='none';
+  saveRecordings(); // persist to localStorage
   switchTab('gravadas');
 }
 
@@ -1503,54 +1548,84 @@ function renderRecCard(rec,idx){
 }
 
 function loadRec(idx){
-  const rec=savedRecs[idx];if(!rec)return;
-  clearMapLayers();
-  routePts=rec.points.map(p=>({lat:p.lat,lon:p.lng}));
-  buildCumDist(routePts);
-  totalRouteDist=routeCumDist[routeCumDist.length-1]||rec.dist;
-  lastRouteIdx=0;
-  const ll=rec.points.map(p=>[p.lat,p.lng]);
-  routeLayer    =L.polyline(ll,{color:'rgba(88,166,255,.25)',weight:6}).addTo(map);
-  routeAheadLayer=L.polyline(ll,{color:'#58a6ff',weight:4}).addTo(map);
-  routeDoneLayer =L.polyline([],{color:'#444',weight:4}).addTo(map);
-  // Load recorded stops as navigation stops (with photos if available)
-  stops=[];insideStop.clear();
-  if(el('stops-list'))el('stops-list').innerHTML='';
-  rec.stops.forEach((s,i)=>{
-    const id=i+1;
-    // Map marker (show camera icon if photo exists)
-    const markerHtml=s.photo
-      ?`<div style="display:flex;flex-direction:column;align-items:center;gap:2px">
-          <div style="background:#f85149;color:#fff;font-size:11px;font-weight:700;font-family:monospace;padding:2px 7px;border-radius:10px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.6)">📷 P${id}</div>
-          <div style="width:12px;height:12px;background:#f85149;border:2px solid #fff;border-radius:50%;box-shadow:0 0 6px #f85149"></div>
-        </div>`
-      :`<div style="display:flex;flex-direction:column;align-items:center;gap:2px">
-          <div style="background:#f85149;color:#fff;font-size:11px;font-weight:700;font-family:monospace;padding:2px 7px;border-radius:10px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.6)">⏸ P${id}</div>
-          <div style="width:12px;height:12px;background:#f85149;border:2px solid #fff;border-radius:50%;box-shadow:0 0 6px #f85149"></div>
-        </div>`;
-    const icon=L.divIcon({html:markerHtml,className:'',iconAnchor:[24,20]});
-    const m=L.marker([s.lat,s.lng],{icon,zIndexOffset:900}).addTo(map);
-    // Add as navigation stop so photo shows during navigation
-    const navStop={id,name:`Stop ${id}`,lat:s.lat,lng:s.lng,
-      dur_s:s.dur_s||0,elapsed:0,running:false,intervalId:null,state:'waiting',
-      photo:s.photo||null};
-    stops.push(navStop);
-    stopMarkers[id]=m;
-    if(el('stops-list')) renderCard(navStop);
-  });
-  el('stops-badge') && (el('stops-badge').textContent=stops.length?` (${stops.length})`:'');
-  el('h-stops') && (el('h-stops').textContent=`0/${stops.length}`);
-  maneuvers=buildManeuvers(routePts);
-  map.fitBounds(routeLayer.getBounds(),{padding:[20,20]});
-  el('btn-nav').disabled=false;
-  el('peek-icon').textContent='🛤️';el('peek-name').textContent=rec.name;
-  el('peek-sub').textContent=`${rec.dist.toFixed(2)} km · ${rec.stops.length} recorded stops`;
-  switchTab('rota');shState='mid';applySheet();
+  const rec=savedRecs[idx];
+  if(!rec){alert('Recording not found. It may have been lost after a page reload.\nRecord a new route.');return;}
+
+  try{
+    clearMapLayers();
+
+    // ── Route track ────────────────────────────────────
+    // Support both {lat,lng} (GPS recorded) and {lat,lon} (GPX parsed)
+    const pts=rec.points.map(p=>({lat:+p.lat,lon:+(p.lng??p.lon)}))
+                        .filter(p=>!isNaN(p.lat)&&!isNaN(p.lon));
+    if(pts.length<2){alert('Recorded route has fewer than 2 valid points.');return;}
+
+    routePts=pts;
+    buildCumDist(routePts);
+    totalRouteDist=routeCumDist[routeCumDist.length-1]||rec.dist||0;
+    lastRouteIdx=0;
+
+    const ll=pts.map(p=>[p.lat,p.lon]);
+    routeLayer    =L.polyline(ll,{color:'rgba(88,166,255,.25)',weight:6}).addTo(map);
+    routeAheadLayer=L.polyline(ll,{color:'#58a6ff',weight:4}).addTo(map);
+    routeDoneLayer =L.polyline([],{color:'#444',weight:4}).addTo(map);
+
+    // ── Stops ─────────────────────────────────────────
+    stops=[];insideStop.clear();stopMarkers={};
+    const sl=el('stops-list');if(sl)sl.innerHTML='';
+
+    (rec.stops||[]).forEach((s,i)=>{
+      if(s==null||isNaN(+s.lat)||isNaN(+s.lng))return; // skip invalid
+      const id=i+1;
+      const hasPhoto=!!(s.photo&&s.photo.length>10);
+      const lbl=hasPhoto?`📷 P${id}`:`⏸ P${id}`;
+      const icon=L.divIcon({
+        html:`<div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+          <div style="background:#f85149;color:#fff;font-size:11px;font-weight:700;
+            font-family:monospace;padding:2px 7px;border-radius:10px;
+            white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.6)">${lbl}</div>
+          <div style="width:12px;height:12px;background:#f85149;border:2px solid #fff;
+            border-radius:50%;box-shadow:0 0 6px #f85149"></div></div>`,
+        className:'',iconAnchor:[24,20]
+      });
+      const m=L.marker([+s.lat,+s.lng],{icon,zIndexOffset:900}).addTo(map);
+      const navStop={id,name:`Stop ${id}`,lat:+s.lat,lng:+s.lng,
+        dur_s:s.dur_s||0,elapsed:0,running:false,intervalId:null,state:'waiting',
+        photo:s.photo||null};
+      stops.push(navStop);
+      stopMarkers[id]=m;
+      if(sl) renderCard(navStop);
+    });
+
+    // ── Update all UI stats ───────────────────────────
+    const totalProg=stops.reduce((a,s)=>a+s.dur_s,0);
+    el('h-dist').textContent=totalRouteDist>=1?totalRouteDist.toFixed(1)+'km':(totalRouteDist*1000).toFixed(0)+'m';
+    el('h-stops').textContent=`0/${stops.length}`;
+    el('h-prog').textContent=totalProg?fmtTime(totalProg):'—';
+    el('h-real').textContent='00:00:00';
+    el('stops-badge').textContent=stops.length?` (${stops.length})`:'';
+    el('stops-empty').style.display=stops.length?'none':'';
+
+    maneuvers=buildManeuvers(routePts);
+    map.fitBounds(routeLayer.getBounds(),{padding:[20,20]});
+    el('btn-nav').disabled=false;
+    el('btn-nav2') && (el('btn-nav2').disabled=false);
+    el('peek-icon').textContent='🛤️';
+    el('peek-name').textContent=rec.name;
+    el('peek-sub').textContent=`${(rec.dist||0).toFixed(2)} km · ${stops.length} stops · tap ▶ Nav to start`;
+    el('no-route') && (el('no-route').style.display='none');
+    el('route-details') && (el('route-details').style.display='flex');
+    updSummaryBar();
+    switchTab('rota');shState='mid';applySheet();
+  }catch(err){
+    console.error('loadRec failed:',err);
+    alert('Error loading recording:\n'+err.message);
+  }
 }
 
 function dlRecGPX(idx){
   const rec=savedRecs[idx];if(!rec)return;
-  let xml=`<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="GPX Navigator Pro">\n<metadata><name>${rec.name}</name><time>${rec.date.toISOString()}</time></metadata>\n`;
+  let xml=`<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="GPX Navigator Pro">\n<metadata><name>${rec.name}</name><time>${(rec.date instanceof Date?rec.date:new Date(rec.date)).toISOString()}</time></metadata>\n`;
   // Waypoints (detected stops with duration)
   rec.stops.forEach((s,i)=>{
     xml+=`<wpt lat="${s.lat.toFixed(8)}" lon="${s.lng.toFixed(8)}">\n`;
