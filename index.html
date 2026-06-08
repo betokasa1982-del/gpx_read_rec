@@ -1505,9 +1505,12 @@ function checkArrival(lat,lng){
     if(distM<=radius&&!insideStop.has(s.id)){
       insideStop.add(s.id);
       showAlert('arrived',`📍 ${s.name}${s.dur_s?' · '+fmtTime(s.dur_s):''}`);
-      // Show this stop's own photo (only if it HAS one)
-      if(s.photo&&s.photo.length>10) showStopPhoto(s,0);
-      else closeStopPhoto(); // clear any previous stop's photo
+      // Only show photo for the NEAREST stop — not every stop within radius.
+      // (multiple stops may be in radius simultaneously; last forEach call would win)
+      if(s.id===nearestStop?.id){
+        if(s.photo&&s.photo.length>10) showStopPhoto(s,0);
+        else closeStopPhoto();
+      }
       s.state='current';updCardState(s);
       if(autoStart&&!s.running)startTimer(s.id);
       speakText(`Arrived at stop ${s.id}${s.dur_s?', planned '+fmtTime(s.dur_s):''}`);
